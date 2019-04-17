@@ -67,19 +67,25 @@ const smartX = ( IPFS , ORBITDB ) => {
             } )
         } )
 
+        publicAccount.events.on ( 'ready' , async  () => {
+
+            if (publicAccount.get( 'index' )) {
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( 'index' )[ mySmartID ] === undefined && publicAccount.get( mySmartID ) === undefined) {
+                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+                    await createAccount()
+                }
+            }
+
+        })
+
         publicAccount.events.on ( 'replicated' , async  () => {
 
             if (publicAccount.get('verifiedMembers') === undefined || publicAccount.get('socialServices') === undefined) {
                 return
             }
 
-            if (myAccount.get('smartID') === undefined) {
-                console.log('Account does not exist for smartID: ', mySmartID)
-                createAccount()
-            } else {
-                if (!publicAccount.get('verifiedMembers').members && !publicAccount.get('socialServices').oracles) {
-                    return
-                }
+            if (!publicAccount.get('verifiedMembers').members && !publicAccount.get('socialServices').oracles) {
+                return
             }
 
             if (publicAccount.get('index')[mySmartID] === undefined || publicAccount.get('index')[mySmartID].peers === undefined) {
@@ -279,7 +285,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             hashes.friendVerificationRequests = await myAccount.put( 'friendVerificationRequests' , [ { smartID : '' , } ] );
 
-            if (await publicAccount.get('verifiedMembers').members === 0) {
+            /*if (await publicAccount.get('verifiedMembers').members === 0) {
                 hashes.verifyingPeer = await myAccount.put( 'verifyingPeer' , {
                     smartID : '' ,
                     securityDeposit : '' ,
@@ -296,7 +302,14 @@ const smartX = ( IPFS , ORBITDB ) => {
                     status : 'pending'
                 } );
 
-            }
+            }*/
+
+            hashes.verifyingPeer = await myAccount.put( 'verifyingPeer' , {
+                smartID : '' ,
+                securityDeposit : '' ,
+                pendingReward : '' ,
+                status : 'pending'
+            } );
 
             hashes.peersVerified = await myAccount.put( 'peersVerified' , [ {
                 smartID : '' ,
@@ -368,7 +381,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             if (myAccount.get('verifyingPeer') !== undefined &&
                 myAccount.get( 'verifyingPeer' ).status === 'verified' &&
                 publicAccount.get('index')[mySmartID].memberNumber !== undefined && publicAccount.get('index')[mySmartID].createdAt !== undefined ) {
-                console.log('member number: ', publicAccount.get('index')[mySmartID].memberNumber)
+                //console.log('member number: ', publicAccount.get('index')[mySmartID].memberNumber)
 
                 const firstMemberIssued = 108573;
                 const memberNumber = publicAccount.get('index')[mySmartID].memberNumber
@@ -1316,7 +1329,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 i.appendChild( document.createTextNode( 'tokenID: ' + tokenID  ))
                 let j = document.createElement('div')
                 j.setAttribute('class', 'tweet')
-                console.log(publicAccount.get(tokenID).urlID)
+                //console.log(publicAccount.get(tokenID).urlID)
                 j.setAttribute('id', publicAccount.get(tokenID).urlID)
                 i.appendChild(j)
                 document.getElementById( 'tokensList' ).appendChild( i )
