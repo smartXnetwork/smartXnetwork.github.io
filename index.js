@@ -1046,13 +1046,13 @@ const smartX = ( IPFS , ORBITDB ) => {
             if (!entries || !entries.proof || !entries.social.twitter || entries.verifyingPeer === 'pending' && smartID === mySmartID ) {
                 console.log('onboarding not completed yet...')
                 document.getElementById('onboardingOverlay').style.display = 'none'
-                let titleText = ['tweets', 'memes', 'videos', 'blogs', 'music', 'games', 'letters', 'podcasts', 'anything']
+                /*let titleText = ['tweets', 'memes', 'videos', 'blogs', 'music', 'games', 'letters', 'podcasts', 'anything']
                 let title = document.getElementById('titleText')
                 let i = 0;
                 setInterval(() => {
                     title.removeChild( title.childNodes[ 0 ] );
                     title.appendChild( document.createTextNode(titleText[i]) )
-                    i === titleText.length - 1 ? i = titleText.length - 1 : i++ }, 2000)
+                    i === titleText.length - 1 ? i = titleText.length - 1 : i++ }, 2000)*/
             } else {
                 document.getElementById('onboardingOverlay').style.display = 'block'
                 document.getElementById('onboardingModal').style.display ='none'
