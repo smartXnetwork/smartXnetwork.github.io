@@ -88,6 +88,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                 return
             }
 
+            if (publicAccount.get( 'index' )) {
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( 'index' )[ mySmartID ] === undefined && publicAccount.get( mySmartID ) === undefined) {
+                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+                    await createAccount()
+                }
+            }
+
             if (publicAccount.get('index')[mySmartID] === undefined || publicAccount.get('index')[mySmartID].peers === undefined) {
                 console.log('peerID-smartID mapping not present so adding...')
                 let dataObj = {
