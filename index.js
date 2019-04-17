@@ -370,12 +370,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                 publicAccount.get('index')[mySmartID].memberNumber !== undefined && publicAccount.get('index')[mySmartID].createdAt !== undefined ) {
                 console.log('member number: ', publicAccount.get('index')[mySmartID].memberNumber)
 
-                const memberNumber = publicAccount.get('index')[mySmartID].memberNumber / 1000000
+                const firstMemberIssued = 108573;
+                const memberNumber = publicAccount.get('index')[mySmartID].memberNumber
                 const totalIssued = myAccount.get( 'verifyingPeer' ).status === 'verified' ?
-                    ((Math.log10( 1 + (memberNumber + .000001) ) - Math.log10( 1 + memberNumber )) * 250000) * Math.pow( 10 , 6 ) : 0
+                    firstMemberIssued * Math.pow( (1 - 1 / Math.pow( 10 , 10 )), memberNumber) : 0
 
                 const actualIssued = totalIssued - myAccount.get( 'verifyingPeer' ).pendingReward
-                const vestingDays = actualIssued / ((Math.log10( 1 + .000001 ) * 250000) * Math.pow( 10 , 6 )) * 5 * 365;
+                const vestingDays = actualIssued / firstMemberIssued * 5 * 365;
                 const dailyBonus = actualIssued / vestingDays
                 const daysElapsed = Math.ceil( (Date.now() - publicAccount.get('index')[mySmartID].createdAt) / (1000 * 60 * 60 * 24) )
 
