@@ -68,10 +68,12 @@ const smartX = ( IPFS , ORBITDB ) => {
         } )
 
         setTimeout(async () => {
-            if (myAccount.get( 'smartID' ) === undefined) {
-                console.log( 'Account does not exist for smartID: ' , mySmartID )
-                await createAccount()
-            } else {console.log('Account already exists for this smartID: ', mySmartID)}
+            if (publicAccount.get( 'index' )) {
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( mySmartID ) === undefined) {
+                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+                    await createAccount()
+                } else {console.log('Account already exists for this smartID: ', mySmartID)}
+            } else {console.log('Public account not loaded yet. Index: ', publicAccount.get( 'index' ))}
         }, 5000)
 
         publicAccount.events.on ( 'replicated' , async  () => {
