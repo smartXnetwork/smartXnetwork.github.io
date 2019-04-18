@@ -56,7 +56,7 @@
                     <div style="background-image: linear-gradient(bisque, white); border-radius: 20px; padding: 20px; margin-bottom: 50px; margin-top: 10px">
                         <img src="https://avatars3.githubusercontent.com/u/44389592?s=400&u=0b1b643c5ce2632dc6cf126f35adb3fd5f6f4d6a&v=4" style="height: 175px; width: 175px; box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);">
                     </div>
-                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">Your smart, all-in-one wallet</h1>
+                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">Your all-in-one smart wallet</h1>
 
                     <h2 style="font-size: 18px; color: #888888; position: relative">
                         From self-sovereign digital identity to currency to markets,
@@ -614,6 +614,18 @@
 </div>
 
 <div id="market" class="tabcontent">
+
+    <div>
+        <button class="btn" style="bottom: 15px; width: 200px;" onclick="document.getElementById('createToken').style.display='block'">Create token ⚡️</i></button>
+        <div id="createToken" class="w3-modal" style="z-index: 1; bottom: 375px">
+            <span onclick="document.getElementById('createToken').style.display ='none'" class="close">&times;</span>
+            <h2 style="color: gray; margin-bottom: 10px; ">Create Token</h2>
+            <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
+            <input id="tokenUrl" type="text" placeholder="Enter url of item you want to tokenize..." required style="background-color: white; margin-bottom: 10px">
+
+            <button id="tokenCreated" class="btn">Create token ⚡️</button>
+        </div>
+    </div>
 
     <div id="tokensList">
 

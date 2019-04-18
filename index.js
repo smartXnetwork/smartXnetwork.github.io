@@ -1591,6 +1591,31 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         })
 
+        document.getElementById('tokenCreated').addEventListener('click', async () => {
+            let url = document.getElementById('tokenUrl').value.toString()
+            console.log(url)
+            if (url.startsWith('https://twitter.com/')) {
+                let urlString = url.replace( 'https://twitter.com/' , '' )
+                let extractValues = urlString.split( '/' )
+                let creator = extractValues[ 0 ].toLowerCase()
+                let urlID = extractValues[ 2 ]
+
+                let dataObj = {
+                    for: publicSmartID,
+                    ID : creator ,
+                    urlID : urlID ,
+                    url : url ,
+                    content : url ,
+                    type : 'tokenCreation' ,
+                }
+                console.log(dataObj)
+                await orbitdb._pubsub.publish( 'smartX' , dataObj )
+                alert('Your token has been created! Please refresh your page to see it live in the market!')
+            } else {
+                alert('Sorry, you can only tokenize tweets for now!')
+            }
+        })
+
         let socialShares = document.querySelectorAll(".js-social-share");
         if (socialShares) {
             [].forEach.call(socialShares, function(anchor) {
@@ -1607,7 +1632,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         } else if (!document.getElementById( "blobdata" ).value && myAccount.get('proof') === null ) {
                             alert( 'Please record a video selfie to submit verification request.' )
                         } else {
-                            if (await publicAccount.get(mySmartID) && await myAccount.get('proof') !== undefined) {
+                            if (await myAccount.get('proof') !== undefined) {
                                 if (myAccount.get( 'proof' ) === null) {
                                     myAccount.get( 'state' ).proof = await myAccount.put( 'proof' , document.getElementById( "blobdata" ).value )
                                     await myAccount.put( 'state' , myAccount.get( 'state' ) )

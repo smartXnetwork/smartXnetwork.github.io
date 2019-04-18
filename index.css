@@ -381,7 +381,7 @@ video {
     box-shadow: 0 2px 5px 0 rgba(229, 66, 10, 0.75);
 }
 
-#payment, #tokenPurchase, #tokenSell {
+#payment, #tokenPurchase, #tokenSell, #createToken {
     position: absolute;
     box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);
     width: 450px;
