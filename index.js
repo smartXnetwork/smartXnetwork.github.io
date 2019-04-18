@@ -76,7 +76,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     to : publicSmartID ,
                     type : 'index' ,
                 }
-                await orbitdb._pubsub.publish( 'smartX-testnet' , dataObj )
+                await orbitdb._pubsub.publish( 'smartX' , dataObj )
             }
         }, 5000)
 
