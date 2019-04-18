@@ -75,7 +75,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     await createAccount()
                 } else {console.log('Account already exists for this smartID: ', mySmartID)}
             } else {console.log('Public account not loaded yet. Index: ', publicAccount.get( 'index' ))}
-        }, 10000)
+        }, 15000)
 
         publicAccount.events.on ( 'replicated' , async  () => {
 
