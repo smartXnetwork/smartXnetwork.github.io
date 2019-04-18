@@ -67,16 +67,18 @@ const smartX = ( IPFS , ORBITDB ) => {
             } )
         } )
 
-        publicAccount.events.on ( 'ready' , async  () => {
-
-            if (publicAccount.get( 'index' )) {
-                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( 'index' )[ mySmartID ] === undefined && publicAccount.get( mySmartID ) === undefined) {
-                    console.log( 'Account does not exist for smartID: ' , mySmartID )
-                    await createAccount()
+        setTimeout(async () => {
+            if (myAccount.get( 'smartID' ) === undefined) {
+                console.log( 'Account is not present or loaded for smartID: ' , mySmartID )
+                let dataObj = {
+                    from : mySmartID ,
+                    fromPeer : orbitdb.id ,
+                    to : publicSmartID ,
+                    type : 'index' ,
                 }
+                await orbitdb._pubsub.publish( 'smartX-testnet' , dataObj )
             }
-
-        })
+        }, 5000)
 
         publicAccount.events.on ( 'replicated' , async  () => {
 
@@ -89,7 +91,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
 
             if (publicAccount.get( 'index' )) {
-                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( 'index' )[ mySmartID ] === undefined && publicAccount.get( mySmartID ) === undefined) {
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( mySmartID ) === undefined) {
                     console.log( 'Account does not exist for smartID: ' , mySmartID )
                     await createAccount()
                 }
