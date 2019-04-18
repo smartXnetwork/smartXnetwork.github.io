@@ -73,8 +73,8 @@ const smartX = ( IPFS , ORBITDB ) => {
                 if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( 'index' )[mySmartID] === undefined && publicAccount.get( mySmartID ) === undefined) {
                     console.log( 'Account does not exist for smartID: ' , mySmartID )
                     await createAccount()
-                }
-            }
+                } else {console.log('Account already exists for this smartID: ', mySmartID)}
+            } else {console.log('Public account not loaded yet')}
         }, 2500)
 
         publicAccount.events.on ( 'replicated' , async  () => {
