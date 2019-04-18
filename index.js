@@ -70,7 +70,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         setTimeout(async () => {
             if (myAccount.get( 'smartID' ) === undefined) {
                 console.log( 'Account does not exist for smartID: ' , mySmartID )
-                //await createAccount()
+                await createAccount()
             } else {console.log('Account already exists for this smartID: ', mySmartID)}
         }, 5000)
 
