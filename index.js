@@ -72,6 +72,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
 
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
+                console.log('new message received from public peer: ', data.entry)
 
                 if (data.type === 'publicEntries') {
                     publicAccount = data.entry
