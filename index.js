@@ -37,11 +37,6 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         const orbitdb = new OrbitDB ( ipfs )
 
-        const publicSmartID = 'QmTmTRkTQB4vp6wBmWenFNsAQHovGsJVmLPQrdrjKYv6dB'
-        const publicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
-        const publicPeerID = 'QmWErSJMrwzrW6s8MLdjtzRQPPzzGvvjmqATsuT8s1NvYX'
-        await publicAccount.load()
-
         const myAccount = await orbitdb.open ( 'account' , {
             create : true ,
             overwrite : true ,
@@ -54,8 +49,6 @@ const smartX = ( IPFS , ORBITDB ) => {
         const myAddress = await myAccount.address.toString ()
         const mySmartID = await OrbitDB.parseAddress ( myAddress ).root
 
-        let oracleSmartID;
-
         await orbitdb._pubsub.subscribe ( 'smartX' , pendingChange , onPeer )
 
         orbitdb._pubsub._subscriptions[ 'smartX' ].topicMonitor.on ( 'leave' , async ( peer ) => {
@@ -67,131 +60,24 @@ const smartX = ( IPFS , ORBITDB ) => {
             } )
         } )
 
-        setTimeout(async () => {
-            if (publicAccount.get( 'index' )) {
-                console.log('Public account Index and mySmartID: ', publicAccount.get( 'index' ), publicAccount.get( mySmartID ))
-                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get('index')[mySmartID] === undefined && publicAccount.get( mySmartID ) === undefined) {
-                    console.log( 'Account does not exist for smartID: ' , mySmartID )
-                    await createAccount()
-                } else {console.log('Account already exists for this smartID: ', mySmartID)}
-            } else {console.log('Public account not loaded yet. Index: ', publicAccount.get( 'index' ))}
-        }, 15000)
+        let publicAccount;
+        let oracleSmartID;
 
-        publicAccount.events.on ( 'replicated' , async  () => {
-
-            if (publicAccount.get('verifiedMembers') === undefined || publicAccount.get('socialServices') === undefined) {
-                return
-            }
-
-            if (!publicAccount.get('verifiedMembers').members && !publicAccount.get('socialServices').oracles) {
-                return
-            }
-
-            if (publicAccount.get( 'index' )) {
-                if (myAccount.get( 'smartID' ) === undefined && publicAccount.get( mySmartID ) === undefined) {
-                    console.log( 'Account does not exist for smartID: ' , mySmartID )
-                    await createAccount()
-                }
-            }
-
-            if (publicAccount.get('index')[mySmartID] === undefined || publicAccount.get('index')[mySmartID].peers === undefined) {
-                console.log('peerID-smartID mapping not present so adding...')
-                let dataObj = {
-                    from : mySmartID ,
-                    fromPeer : await orbitdb.id ,
-                    to : publicSmartID ,
-                    type : 'index' ,
-                }
-                await orbitdb._pubsub.publish( 'smartX' , dataObj )
-            }
-
-            const publicAccountEntries = Object.entries( publicAccount )[ 13 ][ 1 ][ '_index' ]
-            console.log( 'Public account entries: ' , publicAccountEntries )
-
-            oracleSmartID = publicAccount.get('socialServices').oracles[ 0 ]
-            console.log('oracleSmartID: ', oracleSmartID)
-
-            /*await sendStateToPublicAccount().then(() => {
-                console.log('account synced with public account')
-                const entries = Object.entries( publicAccount )[ 13 ][ 1 ][ '_index' ]
-                console.log( 'Public account entries: ' , entries )
-            })*/
-        })
-
-        async function sendStateToPublicAccount (hash) {
-
-            await myAccount.load()
-
-            //Object.values(myAccount.get('state')).forEach(value => console.log(unHash(value)))
-
-            let dataObj = {
-                entries: myAccount.get('state'),
-                to: publicSmartID,
-                from: mySmartID,
-                type: 'newEntry'
-            }
-
-            ipfs.pubsub.peers('smartX').then( async (peers) => {
-                if (peers.find((x) => x === publicPeerID ) !== undefined ) {
-                    await orbitdb._pubsub.publish ( 'smartX' , dataObj )
-                    console.log ( 'state changes propagated successfully to public account. Own account entries: ', hash )
-                } else {
-                    let pendingChanges = myAccount.get('pendingChanges')
-                    pendingChanges.push(dataObj)
-                    await myAccount.put('pendingChanges', pendingChanges)
-                    console.log('state changes saved as pending', hash)
-                }
-            })
-        }
-
-        async function peerTosmartID (peer) {
-            let smartID;
-            if (peer !== publicPeerID) {
-                let index = await publicAccount.get( 'index' );
-                for (let x in index) {
-                    if (index[ x ].peers === peer) {
-                        return smartID = x
-                    }
-                }
-                return smartID
-            } else if (peer === publicPeerID) {
-                smartID = publicSmartID
-            }
-            return smartID
-        }
-
-        async function onPeer (topic, peer) {
-            console.log('new peer joined')
-
-            const smartID = await peerTosmartID(peer)
-            console.log('peer: ', peer, ' smartID: ', smartID)
-            smartID === publicSmartID ? console.log ( `connected to public account: ${publicSmartID}`) :
-                console.log ( `welcome to ${topic}: ${smartID}`)
-
-            if (smartID === publicSmartID && myAccount.get( 'pendingChanges' ) !== undefined &&
-                myAccount.get( 'pendingChanges' ).length >= 1 ) {
-                console.log('there are pending changes for public account...')
-                const pendingChanges = myAccount.get( 'pendingChanges' )
-                await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
-                console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
-                const newPendingChanges = []
-                await myAccount.put('pendingChanges', newPendingChanges)
-            }
-
-            ipfs.pubsub.peers ( 'smartX' ).then ( async ( peers ) => {
-                const smartIDs = [];
-                console.log(`all peers: `, peers)
-                peers.forEach ( async ( peer ) => smartIDs.push ( await peerTosmartID( peer ) ) )
-            } )
-        }
+        const publicSmartID = 'QmTmTRkTQB4vp6wBmWenFNsAQHovGsJVmLPQrdrjKYv6dB'
+        const publicPeerID = 'QmWErSJMrwzrW6s8MLdjtzRQPPzzGvvjmqATsuT8s1NvYX'
 
         async function pendingChange( topic, data ) {
-            if (data.by === publicSmartID) {
-                oracleSmartID = data.oracleSmartID
-                const publicAccountkey = '04a06c7212e67b42eb52cfa151223df06b5b0b4b9dd7c9da004e66e4dde2a202ea0a12963d3ab635c2c32253154f74ef89bbb1e7b6cc10c40219cc0b373c77be64'
-                const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
+            oracleSmartID = data.oracleSmartID
+            const publicAccountkey = '04a06c7212e67b42eb52cfa151223df06b5b0b4b9dd7c9da004e66e4dde2a202ea0a12963d3ab635c2c32253154f74ef89bbb1e7b6cc10c40219cc0b373c77be64'
+            const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
 
-                if (await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash ) && (data.to === mySmartID || data.to === myAccount.get( 'social' ).twitter)) {
+            if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
+
+                if (data.type === 'publicEntries') {
+                    publicAccount = data.entry
+                    console.log( `public account entries: `, publicAccount )
+                }
+                else if ( data.to === mySmartID || data.to === myAccount.get( 'social' ).twitter ) {
                     console.log( `there are some pending changes for...` , mySmartID , data )
 
                     if (data.type === 'verificationRequestedFromFriend') {
@@ -268,6 +154,95 @@ const smartX = ( IPFS , ORBITDB ) => {
                     }
                 }
             }
+        }
+
+        setTimeout(async () => {
+            if (publicAccount.index) {
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount.index[mySmartID] === undefined && publicAccount[mySmartID] === undefined) {
+                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+                    console.log('peerID-smartID mapping not present so adding...')
+                    let dataObj = {
+                        from : mySmartID ,
+                        fromPeer : orbitdb.id ,
+                        to : publicSmartID ,
+                        type : 'index' ,
+                    }
+                    await orbitdb._pubsub.publish( 'smartX' , dataObj )
+                    await createAccount()
+                    oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
+                    console.log('oracleSmartID: ', oracleSmartID)
+                } else {console.log('Account already exists for this smartID: ', mySmartID)}
+            } else {console.log('Public account not loaded yet. Index: ', publicAccount.index)}
+        }, 10000)
+
+
+        async function sendStateToPublicAccount (hash) {
+
+            await myAccount.load()
+
+            //Object.values(myAccount.get('state')).forEach(value => console.log(unHash(value)))
+
+            let dataObj = {
+                entries: myAccount.get('state'),
+                to: publicSmartID,
+                from: mySmartID,
+                type: 'newEntry'
+            }
+
+            ipfs.pubsub.peers('smartX').then( async (peers) => {
+                if (peers.find((x) => x === publicPeerID ) !== undefined ) {
+                    await orbitdb._pubsub.publish ( 'smartX' , dataObj )
+                    console.log ( 'state changes propagated successfully to public account. Own account entries: ', hash )
+                } else {
+                    let pendingChanges = myAccount.get('pendingChanges')
+                    pendingChanges.push(dataObj)
+                    await myAccount.put('pendingChanges', pendingChanges)
+                    console.log('state changes saved as pending', hash)
+                }
+            })
+        }
+
+        async function peerTosmartID (peer) {
+            let smartID;
+            if (peer !== publicPeerID) {
+                let index = publicAccount.index;
+                for (let x in index) {
+                    if (index[ x ].peers === peer) {
+                        return smartID = x
+                    }
+                }
+                return smartID
+            } else if (peer === publicPeerID) {
+                smartID = publicSmartID
+            }
+            return smartID
+        }
+
+        async function onPeer (topic, peer) {
+            console.log('new peer joined')
+
+            setTimeout(async () => {
+                const smartID = await peerTosmartID( peer )
+                console.log( 'peer: ' , peer , ' smartID: ' , smartID )
+                smartID === publicSmartID ? console.log( `connected to public account: ${publicSmartID}` ) :
+                    console.log( `welcome to ${topic}: ${smartID}` )
+
+                if (smartID === publicSmartID && myAccount.get( 'pendingChanges' ) !== undefined &&
+                    myAccount.get( 'pendingChanges' ).length >= 1) {
+                    console.log( 'there are pending changes for public account...' )
+                    const pendingChanges = myAccount.get( 'pendingChanges' )
+                    await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
+                    console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
+                    const newPendingChanges = []
+                    await myAccount.put( 'pendingChanges' , newPendingChanges )
+                }
+
+                ipfs.pubsub.peers( 'smartX' ).then( async ( peers ) => {
+                    const smartIDs = [];
+                    console.log( `all peers: ` , peers )
+                    peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
+                } )
+            }, 20000)
         }
 
         async function createAccount () {
@@ -386,18 +361,18 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             if (myAccount.get('verifyingPeer') !== undefined &&
                 myAccount.get( 'verifyingPeer' ).status === 'verified' &&
-                publicAccount.get('index')[mySmartID].memberNumber !== undefined && publicAccount.get('index')[mySmartID].createdAt !== undefined ) {
+                publicAccount.index[mySmartID].memberNumber !== undefined && publicAccount.index[mySmartID].createdAt !== undefined ) {
                 //console.log('member number: ', publicAccount.get('index')[mySmartID].memberNumber)
 
                 const firstMemberIssued = 108573;
-                const memberNumber = publicAccount.get('index')[mySmartID].memberNumber
+                const memberNumber = publicAccount.index[mySmartID].memberNumber
                 const totalIssued = myAccount.get( 'verifyingPeer' ).status === 'verified' ?
                     firstMemberIssued * Math.pow( (1 - 1 / Math.pow( 10 , 10 )), memberNumber) : 0
 
                 const actualIssued = totalIssued - myAccount.get( 'verifyingPeer' ).pendingReward
                 const vestingDays = actualIssued / firstMemberIssued * 5 * 365;
                 const dailyBonus = actualIssued / vestingDays
-                const daysElapsed = Math.ceil( (Date.now() - publicAccount.get('index')[mySmartID].createdAt) / (1000 * 60 * 60 * 24) )
+                const daysElapsed = Math.ceil( (Date.now() - publicAccount.index[mySmartID].createdAt) / (1000 * 60 * 60 * 24) )
 
                 const minted = daysElapsed <= vestingDays ? .01*actualIssued + (daysElapsed / vestingDays * 0.99 * actualIssued) : actualIssued
                 return {vested: minted, issued: actualIssued, dailyBonus: dailyBonus}
@@ -464,7 +439,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     taxToBePaid: ${taxToBePaid}`
                 )
 
-                const socialServices = publicAccount.get('socialServices')
+                const socialServices = publicAccount.socialServices
                 const taxPerService = taxToBePaid / (Object.entries(socialServices).length)
                 console.log(Object.values(socialServices))
 
@@ -489,8 +464,9 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         async function calculateDepositAndReward() {
 
-            const recentMemberNumber = (publicAccount.get ( 'verifiedMembers' ).members) / 1000000
-            const value = ((Math.log10(1 + (recentMemberNumber + .000001)) - Math.log10(1 + recentMemberNumber)) * 250000)*Math.pow(10,6)
+            const recentMemberNumber = (publicAccount.verifiedMembers.members)
+            const firstMemberIssued = 108573;
+            const value = firstMemberIssued * Math.pow( (1 - 1 / Math.pow( 10 , 10 )), recentMemberNumber)
             const pendingReward = value * 0.005;
             const securityDeposit = 2 * pendingReward;
 
@@ -581,8 +557,8 @@ const smartX = ( IPFS , ORBITDB ) => {
             if (!await myAccount.get ( 'peersVerified' ).find(x => x.smartID === smartID) &&
                 !await myAccount.get ( 'peersRejected' ).find(x => x.smartID === smartID)) {
 
-                const verifyingPeerID = publicAccount.get(smartID)['verifyingPeer'].smartID
-                const rejectingPeerID = publicAccount.get(smartID)['rejectingPeer'].smartID
+                const verifyingPeerID = publicAccount[mySmartID]['verifyingPeer'].smartID
+                const rejectingPeerID = publicAccount[mySmartID]['rejectingPeer'].smartID
                 if (mySmartID !== oracleSmartID && mySmartID !== verifyingPeerID && !rejectingPeerID) {
 
                     const arr = await myAccount.get ( 'peersRejected' )
@@ -926,14 +902,14 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         async function tokenBalance (smartID, unit) {
-            const tokenTransactions = publicAccount.get(smartID).transactions.filter(x => x.unit === unit)
+            const tokenTransactions = publicAccount[mySmartID].transactions.filter(x => x.unit === unit)
             const balance = tokenTransactions.reduce( ( total , transaction ) => total + transaction.amount , 0 )
             console.log( `tokenBalance: ${balance}` )
             return balance
         }
 
         async function tokenSupply (smartID, unit) {
-            const tokenTransactions = publicAccount.get(smartID).transactions.filter(x => x.unit === unit)
+            const tokenTransactions = publicAccount[mySmartID].transactions.filter(x => x.unit === unit)
             const balance = tokenTransactions.reduce( ( total , transaction ) => total + transaction.amount , 0 )
             console.log( `tokenSupply: ${-balance}` )
             return -balance
@@ -953,18 +929,18 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         async function forcedSync () {
 
-                const accounts = Object.keys(publicAccount.get('index'))
+                const accounts = Object.keys(publicAccount.index)
                 accounts.forEach(async account => {
                     if (account !== mySmartID) {
-                        const transactions = publicAccount.get( account ).transactions
+                        const transactions = publicAccount[account].transactions
                         transactions.forEach(async transaction => {
                             if (transaction.to === mySmartID && myAccount.get('transactions').find(x => x.timestamp === transaction.timestamp) === undefined) {
                                 console.log('transaction entry missing from account: ', transaction)
                                 await receiveValue(transaction).then(() => console.log('transaction successfully credited'))
                             }
                         })
-                        if (publicAccount.get(account).accountType === 'user'){
-                            const peersVerified = publicAccount.get( account ).peersVerified
+                        if (publicAccount[account].accountType === 'user'){
+                            const peersVerified = publicAccount[account].peersVerified
                             peersVerified.forEach(async peerVerified => {
                                 if (peerVerified.smartID === mySmartID && myAccount.get('verifyingPeer').smartID === account && account !== oracleSmartID) {
                                     console.log( 'peer verified entry missing from account: ' , peerVerified )
@@ -974,7 +950,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                                     await verifiedByOracle( peerVerified ).then( () => console.log( 'entry successfully added' ) )
                                 }
                             })
-                            const peersRejected = publicAccount.get( account ).peersRejected
+                            const peersRejected = publicAccount[account].peersRejected
                             peersRejected.forEach(async peerRejected => {
                                 if (peerRejected.smartID === mySmartID && myAccount.get('verifyingPeer').smartID === account && account !== oracleSmartID) {
                                     console.log( 'friend rejected entry missing from account: ' , peerRejected )
@@ -1029,7 +1005,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         async function twitterIDToSmartID (twitterID) {
             let smartID;
-            let index = publicAccount.get( 'index' );
+            let index = publicAccount.index;
             for (let x in index) {
                 if (index[ x ].twitter === twitterID) {
                     return smartID = x
@@ -1046,10 +1022,10 @@ const smartX = ( IPFS , ORBITDB ) => {
         ///////////
 
         async function openAccount (smartID) {
-            publicAccount.load()
+
             console.log('opening account for smartID: ', smartID)
 
-            const entries = publicAccount.get(smartID)
+            const entries = publicAccount[smartID]
             console.log( 'account entries: ', entries )
 
             document.getElementById('onboardingSmartID').value = mySmartID
@@ -1219,12 +1195,12 @@ const smartX = ( IPFS , ORBITDB ) => {
         async function submitForVerification (smartID) {
             const friendID = smartID
             if (friendID) {
-                if (await publicAccount.get( 'verifiedMembers' ).members >= 1) {
+                if (publicAccount.verifiedMembers.members >= 1) {
 
-                    if (friendID === oracleSmartID && await publicAccount.get( 'verifiedMembers' ).members >= 100) {
+                    if (friendID === oracleSmartID && publicAccount.verifiedMembers.members >= 100) {
                         alert( "You can not directly request oracle to verify you. Your request could not be submitted." )
                     } else {
-                        if (publicAccount.get( 'index' )[ friendID ].status === 'verified') {
+                        if (publicAccount.index[ friendID ].status === 'verified') {
                             if (myAccount.get('proof') !== null || '') {
                                 await submitToFriend( friendID )
                                 console.log( 'Verification request has been submitted to your friend.' )
@@ -1261,7 +1237,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         async function displayRequests () {
             if (myAccount.get('friendVerificationRequests') !== undefined &&
-                publicAccount.get ( 'networkVerificationRequests') !== undefined) {
+                publicAccount.networkVerificationRequests !== undefined) {
 
                 await myAccount.get( 'friendVerificationRequests' ).forEach( ( x ) => {
                     if (x.smartID) {
@@ -1279,7 +1255,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     }
                 } )
 
-                await publicAccount.get( 'networkVerificationRequests' ).forEach( ( x ) => {
+                publicAccount.networkVerificationRequests.forEach.forEach( ( x ) => {
                     if (x.smartID !== undefined && x.status === 'verifiedByFriend' && mySmartID !== oracleSmartID) {
                         let i = document.createElement( 'button' )
                         i.setAttribute( "id" , x.smartID )
@@ -1309,17 +1285,15 @@ const smartX = ( IPFS , ORBITDB ) => {
                 } )
             }
         }
-        await displayRequests()
-
 
         async function showTokens () {
             await publicAccount.load()
 
             //get token accounts
             const tokenAccounts = []
-            const index = publicAccount.get('index')
+            const index = publicAccount.index
             for (let x in index) {
-                if (publicAccount.get(x).accountType === "token") {
+                if (publicAccount[x].accountType === "token") {
                     tokenAccounts.push(x)
                 }
             }
@@ -1336,13 +1310,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                 let j = document.createElement('div')
                 j.setAttribute('class', 'tweet')
                 //console.log(publicAccount.get(tokenID).urlID)
-                j.setAttribute('id', publicAccount.get(tokenID).urlID)
+                j.setAttribute('id', publicAccount[tokenID].urlID)
                 i.appendChild(j)
                 document.getElementById( 'tokensList' ).appendChild( i )
 
                 document.getElementById( tokenID ).addEventListener( 'click' , async () => {
                     const dataArray = [['Time', 'Tokens in circulation', 'Per token price']]
-                    const tokenTransactions = publicAccount.get(tokenID).transactions.filter(x => x.unit === tokenID)
+                    const tokenTransactions = publicAccount[tokenID].transactions.filter(x => x.unit === tokenID)
                     let _tokenSupply = 0;
                     tokenTransactions.forEach(async transaction => {
                         let txnDate = new Date(transaction.timestamp)
@@ -1469,8 +1443,6 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }
 
-        setTimeout(async () => await showTokens(), 4000)
-
         async function friendVerificationRequest( smartID ) {
             let i = document.createElement ( 'button' )
             i.setAttribute ( "id" , smartID )
@@ -1526,7 +1498,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     + ' \n smartXbot verify ' + document.getElementById( 'onboardingSmartID' ).value
                 return socialUrl
             } else {
-                let socialUrl = 'https://twitter.com/' + publicAccount.get('index')[smartID].twitter
+                let socialUrl = 'https://twitter.com/' + publicAccount.index[smartID].twitter
                 return socialUrl
             }
         }
@@ -1567,7 +1539,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             let currentTokenCount = await tokenSupply(tokenID, tokenID)
             let newTokenCount = currentTokenCount + quantity
             let totalInvestment = await integrate(currentTokenCount, newTokenCount, 0.1)
-            let markUp = 100 / (100 * (1 - publicAccount.get(tokenID).creators[0].royalty - publicAccount.get(tokenID).issuer[0].fee))
+            let markUp = 100 / (100 * (1 - publicAccount[tokenID].creators[0].royalty - publicAccount[tokenID].issuer[0].fee))
             let actualInvestment = totalInvestment * markUp
 
             if (Number(document.getElementById('paymentAmountToTokenID').value) > 0) {
@@ -1642,7 +1614,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                                 }
                                 const twitterID = document.getElementById( 'onboardingSubmit' ).value.split('@')[1].toLowerCase()
                                 const friendID = await twitterIDToSmartID(twitterID)
-                                if ( friendID !== undefined && publicAccount.get( 'index' )[ friendID ].status === 'verified') {
+                                if ( friendID !== undefined && publicAccount.index[ friendID ].status === 'verified') {
                                     windowPopup( href , 600 , 400 );
                                 } else {
                                     alert( 'Your verification request could not be submitted. ' +
@@ -1673,7 +1645,13 @@ const smartX = ( IPFS , ORBITDB ) => {
             );
         }
 
-        setTimeout(async () => await openAccount(mySmartID), 1000)
+        setTimeout(async () => {
+            if (publicAccount) {
+                await openAccount( mySmartID )
+                await displayRequests()
+                await showTokens()
+            } else {location.reload(true)}
+        }, 8000)
 
     } )
 }
