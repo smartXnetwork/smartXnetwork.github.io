@@ -1674,11 +1674,11 @@ const smartX = ( IPFS , ORBITDB ) => {
                                         } else {
                                             location.reload(true)
                                         }
-                                    }, 20000)
+                                    }, 30000)
                             }
-                        }, 15000)
+                        }, 20000)
                     }
-                }, 10000)
+                }, 12500)
             }
         }, 7500)
 
