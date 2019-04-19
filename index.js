@@ -1650,6 +1650,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await showTokens()
                 await checkAccount()
             } else {
+                document.getElementById('splashScreen').style.display = 'none'
                 setTimeout(async () => {
                     if (publicAccount) {
                         await openAccount( mySmartID )
@@ -1664,9 +1665,18 @@ const smartX = ( IPFS , ORBITDB ) => {
                                 await showTokens()
                                 await checkAccount()
                             } else {
-                                location.reload(true)
+                                    setTimeout(async () => {
+                                        if (publicAccount) {
+                                            await openAccount( mySmartID )
+                                            await displayRequests()
+                                            await showTokens()
+                                            await checkAccount()
+                                        } else {
+                                            location.reload(true)
+                                        }
+                                    }, 20000)
                             }
-                        }, 10000)
+                        }, 15000)
                     }
                 }, 10000)
             }
