@@ -1651,6 +1651,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await checkAccount()
             } else {
                 document.getElementById('splashScreen').style.display = 'none'
+                await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                 setTimeout(async () => {
                     if (publicAccount) {
                         await openAccount( mySmartID )
@@ -1658,6 +1659,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         await showTokens()
                         await checkAccount()
                     } else {
+                        await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                         setTimeout(async () => {
                             if (publicAccount) {
                                 await openAccount( mySmartID )
@@ -1665,6 +1667,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                                 await showTokens()
                                 await checkAccount()
                             } else {
+                                await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                                     setTimeout(async () => {
                                         if (publicAccount) {
                                             await openAccount( mySmartID )
