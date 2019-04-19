@@ -72,7 +72,6 @@ const smartX = ( IPFS , ORBITDB ) => {
             const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
 
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
-                console.log('new message received from public peer: ', data.entry)
 
                 if (data.type === 'publicEntries') {
                     publicAccount = data.entry
@@ -157,7 +156,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }
 
-        setTimeout(async () => {
+        async function checkAccount () {
             if (publicAccount.index) {
                 if (myAccount.get( 'smartID' ) === undefined && publicAccount.index[mySmartID] === undefined && publicAccount[mySmartID] === undefined) {
                     console.log( 'Account does not exist for smartID: ' , mySmartID )
@@ -174,8 +173,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log('oracleSmartID: ', oracleSmartID)
                 } else {console.log('Account already exists for this smartID: ', mySmartID)}
             } else {console.log('Public account not loaded yet. Index: ', publicAccount.index)}
-        }, 20000)
-
+        }
 
         async function sendStateToPublicAccount (hash) {
 
@@ -1650,8 +1648,29 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
-            } else {location.reload(true)}
-        }, 20000)
+                await checkAccount()
+            } else {
+                setTimeout(async () => {
+                    if (publicAccount) {
+                        await openAccount( mySmartID )
+                        await displayRequests()
+                        await showTokens()
+                        await checkAccount()
+                    } else {
+                        setTimeout(async () => {
+                            if (publicAccount) {
+                                await openAccount( mySmartID )
+                                await displayRequests()
+                                await showTokens()
+                                await checkAccount()
+                            } else {
+                                location.reload(true)
+                            }
+                        }, 15000)
+                    }
+                }, 10000)
+            }
+        }, 5000)
 
     } )
 }
