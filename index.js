@@ -1650,7 +1650,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await displayRequests()
                 await showTokens()
             } else {location.reload(true)}
-        }, 8000)
+        }, 15000)
 
     } )
 }
