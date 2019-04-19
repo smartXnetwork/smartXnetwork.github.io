@@ -241,7 +241,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log( `all peers: ` , peers )
                     peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
                 } )
-            }, 25000)
+            }, 45000)
         }
 
         async function createAccount () {
@@ -1680,7 +1680,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     }
                 }, 10000)
             }
-        }, 10000)
+        }, 7500)
 
     } )
 }
