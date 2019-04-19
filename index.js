@@ -174,7 +174,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log('oracleSmartID: ', oracleSmartID)
                 } else {console.log('Account already exists for this smartID: ', mySmartID)}
             } else {console.log('Public account not loaded yet. Index: ', publicAccount.index)}
-        }, 10000)
+        }, 20000)
 
 
         async function sendStateToPublicAccount (hash) {
@@ -243,7 +243,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log( `all peers: ` , peers )
                     peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
                 } )
-            }, 20000)
+            }, 25000)
         }
 
         async function createAccount () {
@@ -1256,7 +1256,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     }
                 } )
 
-                publicAccount.networkVerificationRequests.forEach.forEach( ( x ) => {
+                publicAccount.networkVerificationRequests.forEach( ( x ) => {
                     if (x.smartID !== undefined && x.status === 'verifiedByFriend' && mySmartID !== oracleSmartID) {
                         let i = document.createElement( 'button' )
                         i.setAttribute( "id" , x.smartID )
@@ -1651,7 +1651,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await displayRequests()
                 await showTokens()
             } else {location.reload(true)}
-        }, 15000)
+        }, 20000)
 
     } )
 }
