@@ -1287,7 +1287,6 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         async function showTokens () {
-            await publicAccount.load()
 
             //get token accounts
             const tokenAccounts = []
