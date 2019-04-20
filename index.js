@@ -49,7 +49,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         const myAddress = await myAccount.address.toString ()
         const mySmartID = await OrbitDB.parseAddress ( myAddress ).root
 
-        await orbitdb._pubsub.subscribe ( 'smartX' , pendingChange , setTimeout(() => onPeer, 60000) )
+        await orbitdb._pubsub.subscribe ( 'smartX' , pendingChange , onPeer )
 
         orbitdb._pubsub._subscriptions[ 'smartX' ].topicMonitor.on ( 'leave' , async ( peer ) => {
             const smartID = await peerTosmartID(peer)
@@ -241,28 +241,30 @@ const smartX = ( IPFS , ORBITDB ) => {
         async function onPeer (topic, peer) {
             console.log('new peer joined')
 
-            if (publicAccount) {
-                const smartID = await peerTosmartID( peer )
-                console.log( 'peer: ' , peer , ' smartID: ' , smartID )
-                smartID === publicSmartID ? console.log( `connected to public account: ${publicSmartID}` ) :
-                    console.log( `welcome to ${topic}: ${smartID}` )
+            setTimeout (async () => {
+                if (publicAccount) {
+                    const smartID = await peerTosmartID( peer )
+                    console.log( 'peer: ' , peer , ' smartID: ' , smartID )
+                    smartID === publicSmartID ? console.log( `connected to public account: ${publicSmartID}` ) :
+                        console.log( `welcome to ${topic}: ${smartID}` )
 
-                if (smartID === publicSmartID && myAccount.get( 'pendingChanges' ) !== undefined &&
-                    myAccount.get( 'pendingChanges' ).length >= 1) {
-                    console.log( 'there are pending changes for public account...' )
-                    const pendingChanges = myAccount.get( 'pendingChanges' )
-                    await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
-                    console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
-                    const newPendingChanges = []
-                    await myAccount.put( 'pendingChanges' , newPendingChanges )
+                    if (smartID === publicSmartID && myAccount.get( 'pendingChanges' ) !== undefined &&
+                        myAccount.get( 'pendingChanges' ).length >= 1) {
+                        console.log( 'there are pending changes for public account...' )
+                        const pendingChanges = myAccount.get( 'pendingChanges' )
+                        await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
+                        console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
+                        const newPendingChanges = []
+                        await myAccount.put( 'pendingChanges' , newPendingChanges )
+                    }
+
+                    ipfs.pubsub.peers( 'smartX' ).then( async ( peers ) => {
+                        const smartIDs = [];
+                        console.log( `all peers: ` , peers )
+                        peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
+                    } )
                 }
-
-                ipfs.pubsub.peers( 'smartX' ).then( async ( peers ) => {
-                    const smartIDs = [];
-                    console.log( `all peers: ` , peers )
-                    peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
-                } )
-            }
+            }, 60000)
         }
 
         async function createAccount () {
