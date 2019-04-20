@@ -177,7 +177,10 @@ const smartX = ( IPFS , ORBITDB ) => {
         } )
 
         async function checkAccount () {
-            if (publicAccount.index && publicAccount.index[mySmartID] === undefined) {
+            if (publicAccount.index) {
+                oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
+                console.log('oracleSmartID: ', oracleSmartID)
+                if (publicAccount.index[mySmartID] === undefined) {
                     console.log('peerID-smartID mapping not present so adding...')
                     let dataObj = {
                         from : mySmartID ,
@@ -185,14 +188,12 @@ const smartX = ( IPFS , ORBITDB ) => {
                         to : publicSmartID ,
                         type : 'index' ,
                     }
-                    await orbitdb._pubsub.publish( 'smartX' , dataObj )
-
-                    if (myAccount.get( 'smartID' ) === undefined && publicAccount[mySmartID] === undefined) {
-                        console.log( 'Account does not exist for smartID: ' , mySmartID )
-                        await createAccount()
-                        oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
-                        console.log('oracleSmartID: ', oracleSmartID)
-                    } else {console.log('Account already exists for this smartID: ', mySmartID)}
+                    await orbitdb._pubsub.publish( 'smartX-testnet' , dataObj )
+                }
+                if (myAccount.get( 'smartID' ) === undefined && publicAccount[mySmartID] === undefined) {
+                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+                    await createAccount()
+                } else {console.log('Account already exists for this smartID: ', mySmartID)}
             } else {console.log('Public account not loaded yet. Index: ', publicAccount.index)}
         }
 
