@@ -49,7 +49,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         const myAddress = await myAccount.address.toString ()
         const mySmartID = await OrbitDB.parseAddress ( myAddress ).root
 
-        await orbitdb._pubsub.subscribe ( 'smartX' , pendingChange , onPeer )
+        await orbitdb._pubsub.subscribe ( 'smartX' , pendingChange , setTimeout(() => onPeer, 60000) )
 
         orbitdb._pubsub._subscriptions[ 'smartX' ].topicMonitor.on ( 'leave' , async ( peer ) => {
             const smartID = await peerTosmartID(peer)
