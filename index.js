@@ -73,7 +73,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
 
-                if (data.type === 'publicEntries') {
+                if (data.type === 'publicEntries' && !publicAccount) {
                     publicAccount = data.entry
                     console.log( `public account entries: `, publicAccount )
                 }
@@ -1647,8 +1647,10 @@ const smartX = ( IPFS , ORBITDB ) => {
             );
         }
 
+        await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
+        await openAccount( mySmartID )
+
         setTimeout(async () => {
-            await openAccount( mySmartID )
             if (publicAccount) {
                 await checkAccount()
                 await openAccount( mySmartID )
