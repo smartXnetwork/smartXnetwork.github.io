@@ -156,26 +156,6 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }
 
-        const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
-
-        fullPublicAccount.events.on ( 'replicated' , async  () => {
-            if (!fullPublicAccount.get('index') || !fullPublicAccount.get('verifiedMembers') || !fullPublicAccount.get('socialServices')
-                || !fullPublicAccount.get('verifiedMembers').members || !fullPublicAccount.get('socialServices').oracles) {
-                return
-            }
-
-            console.log('public account synced')
-
-            if (!publicAccount) {
-                publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
-                console.log('public account synced from main and updated locally: ', publicAccount)
-                await checkAccount()
-                await openAccount( mySmartID )
-                await displayRequests()
-                await showTokens()
-            }
-        } )
-
         async function checkAccount () {
             if (publicAccount.index) {
                 oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
@@ -1710,6 +1690,26 @@ const smartX = ( IPFS , ORBITDB ) => {
                 }, 10000)
             }
         }, 5000)
+
+        const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
+
+        fullPublicAccount.events.on ( 'replicated' , async  () => {
+            if (!fullPublicAccount.get('index') || !fullPublicAccount.get('verifiedMembers') || !fullPublicAccount.get('socialServices')
+                || !fullPublicAccount.get('verifiedMembers').members || !fullPublicAccount.get('socialServices').oracles) {
+                return
+            }
+
+            console.log('public account synced')
+
+            if (!publicAccount) {
+                publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+                console.log('public account synced from main and updated locally: ', publicAccount)
+                await checkAccount()
+                await openAccount( mySmartID )
+                await displayRequests()
+                await showTokens()
+            }
+        } )
 
     } )
 }
