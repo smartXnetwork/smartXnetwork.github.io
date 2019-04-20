@@ -169,17 +169,15 @@ const smartX = ( IPFS , ORBITDB ) => {
             if (!publicAccount) {
                 publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
                 console.log('public account synced from main and updated locally: ', publicAccount)
+                await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
-                await checkAccount()
             }
         } )
 
         async function checkAccount () {
-            if (publicAccount.index) {
-                if (myAccount.get( 'smartID' ) === undefined && publicAccount.index[mySmartID] === undefined && publicAccount[mySmartID] === undefined) {
-                    console.log( 'Account does not exist for smartID: ' , mySmartID )
+            if (publicAccount.index && publicAccount.index[mySmartID] === undefined) {
                     console.log('peerID-smartID mapping not present so adding...')
                     let dataObj = {
                         from : mySmartID ,
@@ -188,10 +186,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                         type : 'index' ,
                     }
                     await orbitdb._pubsub.publish( 'smartX' , dataObj )
-                    await createAccount()
-                    oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
-                    console.log('oracleSmartID: ', oracleSmartID)
-                } else {console.log('Account already exists for this smartID: ', mySmartID)}
+
+                    if (myAccount.get( 'smartID' ) === undefined && publicAccount[mySmartID] === undefined) {
+                        console.log( 'Account does not exist for smartID: ' , mySmartID )
+                        await createAccount()
+                        oracleSmartID = publicAccount.socialServices.oracles[ 0 ]
+                        console.log('oracleSmartID: ', oracleSmartID)
+                    } else {console.log('Account already exists for this smartID: ', mySmartID)}
             } else {console.log('Public account not loaded yet. Index: ', publicAccount.index)}
         }
 
@@ -1665,35 +1666,35 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         setTimeout(async () => {
             if (publicAccount) {
+                await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
-                await checkAccount()
             } else {
                 document.getElementById('splashScreen').style.display = 'none'
                 await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                 setTimeout(async () => {
                     if (publicAccount) {
+                        await checkAccount()
                         await openAccount( mySmartID )
                         await displayRequests()
                         await showTokens()
-                        await checkAccount()
                     } else {
                         await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                         setTimeout(async () => {
                             if (publicAccount) {
+                                await checkAccount()
                                 await openAccount( mySmartID )
                                 await displayRequests()
                                 await showTokens()
-                                await checkAccount()
                             } else {
                                 await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                                     setTimeout(async () => {
                                         if (publicAccount) {
+                                            await checkAccount()
                                             await openAccount( mySmartID )
                                             await displayRequests()
                                             await showTokens()
-                                            await checkAccount()
                                         } else {
                                             alert('Syncing of account seems to be taking a bit longer than expected. ' +
                                                 'Please keep this tab open and check back again in couple of mins. ' +
