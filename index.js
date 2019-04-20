@@ -156,6 +156,26 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }
 
+        const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
+
+        fullPublicAccount.events.on ( 'replicated' , async  () => {
+            if (!fullPublicAccount.get('index') || !fullPublicAccount.get('verifiedMembers') || !fullPublicAccount.get('socialServices')
+                || !fullPublicAccount.get('verifiedMembers').members || !fullPublicAccount.get('socialServices').oracles) {
+                return
+            }
+
+            console.log('public account synced')
+
+            if (!publicAccount) {
+                console.log('public account synced from main and updated locally: ', publicAccount)
+                publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+                await openAccount( mySmartID )
+                await displayRequests()
+                await showTokens()
+                await checkAccount()
+            }
+        } )
+
         async function checkAccount () {
             if (publicAccount.index) {
                 if (myAccount.get( 'smartID' ) === undefined && publicAccount.index[mySmartID] === undefined && publicAccount[mySmartID] === undefined) {
@@ -1677,13 +1697,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                                         } else {
                                             location.reload(true)
                                         }
-                                    }, 30000)
+                                    }, 20000)
                             }
-                        }, 20000)
+                        }, 15000)
                     }
-                }, 12500)
+                }, 10000)
             }
-        }, 7500)
+        }, 5000)
 
     } )
 }
