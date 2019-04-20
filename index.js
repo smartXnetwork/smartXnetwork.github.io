@@ -167,8 +167,8 @@ const smartX = ( IPFS , ORBITDB ) => {
             console.log('public account synced')
 
             if (!publicAccount) {
-                console.log('public account synced from main and updated locally: ', publicAccount)
                 publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+                console.log('public account synced from main and updated locally: ', publicAccount)
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
@@ -261,7 +261,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log( `all peers: ` , peers )
                     peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
                 } )
-            }, 45000)
+            }, 1000)
         }
 
         async function createAccount () {
