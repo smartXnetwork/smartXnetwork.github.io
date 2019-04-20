@@ -355,18 +355,18 @@ const smartX = ( IPFS , ORBITDB ) => {
                 } ]
             );
 
-            console.log('new account hashes: ', hashes)
+            //console.log('new account hashes: ', hashes)
 
             console.log( 'new account created for smartID: ' , mySmartID, Object.entries( myAccount )[ 13 ][ 1 ][ '_index' ] )
 
-            let dataObj = {
+            /*let dataObj = {
                 from : mySmartID ,
                 fromPeer : orbitdb.id ,
                 to : publicSmartID ,
                 type : 'index' ,
             }
 
-            await orbitdb._pubsub.publish ( 'smartX' , dataObj )
+            await orbitdb._pubsub.publish ( 'smartX' , dataObj )*/
 
             await myAccount.put('state', hashes).then(async (hash) => await sendStateToPublicAccount(hash).then(() => {
                 console.log('added your new account to public account')
