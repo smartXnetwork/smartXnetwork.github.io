@@ -240,7 +240,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         async function onPeer (topic, peer) {
             console.log('new peer joined')
 
-            setTimeout(async () => {
+            if (publicAccount) {
                 const smartID = await peerTosmartID( peer )
                 console.log( 'peer: ' , peer , ' smartID: ' , smartID )
                 smartID === publicSmartID ? console.log( `connected to public account: ${publicSmartID}` ) :
@@ -261,7 +261,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     console.log( `all peers: ` , peers )
                     peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
                 } )
-            }, 1000)
+            }
         }
 
         async function createAccount () {
