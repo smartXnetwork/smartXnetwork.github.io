@@ -1647,7 +1647,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             );
         }
 
-        await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
+        await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
         await openAccount( mySmartID )
 
         setTimeout(async () => {
@@ -1657,7 +1657,8 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await displayRequests()
                 await showTokens()
             } else {
-                await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
+                console.log('requesting public entries')
+                await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
                 setTimeout(async () => {
                     if (publicAccount) {
                         await checkAccount()
@@ -1665,7 +1666,8 @@ const smartX = ( IPFS , ORBITDB ) => {
                         await displayRequests()
                         await showTokens()
                     } else {
-                        await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
+                        console.log('requesting public entries')
+                        await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
                         setTimeout(async () => {
                             if (publicAccount) {
                                 await checkAccount()
@@ -1673,7 +1675,8 @@ const smartX = ( IPFS , ORBITDB ) => {
                                 await displayRequests()
                                 await showTokens()
                             } else {
-                                await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
+                                console.log('requesting public entries')
+                                await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
                                     setTimeout(async () => {
                                         if (publicAccount) {
                                             await checkAccount()
