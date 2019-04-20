@@ -1650,7 +1650,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
-        setTimeout(async () => await openAccount( mySmartID ), 2500)
+        setTimeout(async () => await openAccount( mySmartID ), 5000)
 
         setTimeout(async () => {
             if (publicAccount) {
@@ -1691,13 +1691,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                                                 'Please keep this tab open and check back again in couple of mins. ' +
                                                 'Sorry for the inconvenience.')
                                         }
-                                    }, 20000)
+                                    }, 15000)
                             }
                         }, 15000)
                     }
-                }, 10000)
+                }, 15000)
             }
-        }, 10000)
+        }, 15000)
 
         const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
 
