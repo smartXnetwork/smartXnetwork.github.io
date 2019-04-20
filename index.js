@@ -1028,7 +1028,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             console.log('opening account for smartID: ', smartID)
 
-            const entries = publicAccount[smartID]
+            const entries = smartID === mySmartID ? Object.entries(myAccount)[ 13 ][ 1 ][ '_index' ] : publicAccount[smartID]
             console.log( 'account entries: ', entries )
 
             document.getElementById('onboardingSmartID').value = mySmartID
@@ -1648,13 +1648,13 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         setTimeout(async () => {
+            await openAccount( mySmartID )
             if (publicAccount) {
                 await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
             } else {
-                document.getElementById('splashScreen').style.display = 'none'
                 await orbitdb._pubsub.publish( 'smartX' , {type: 'requestingPublicEntries'} )
                 setTimeout(async () => {
                     if (publicAccount) {
@@ -1679,7 +1679,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                                             await displayRequests()
                                             await showTokens()
                                         } else {
-                                            alert('Syncing of account seems to be taking a bit longer than expected. ' +
+                                            alert('Syncing of account seems to be taking a bit longer than expected due to high traffic. ' +
                                                 'Please keep this tab open and check back again in couple of mins. ' +
                                                 'Sorry for the inconvenience.')
                                         }
@@ -1691,6 +1691,12 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }, 5000)
 
+        setInterval(() => {
+            if (myAccount.get( 'smartID' ) !== undefined && publicAccount[mySmartID] === undefined) {
+                sendStateToPublicAccount().then(() => console.log('state not updated in public account so sent again'))
+            }
+        }, 10000)
+
         const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
 
         fullPublicAccount.events.on ( 'replicated' , async  () => {
@@ -1699,10 +1705,9 @@ const smartX = ( IPFS , ORBITDB ) => {
                 return
             }
 
-            console.log('public account synced')
+            publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
 
-            if (!publicAccount) {
-                publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+            if (publicAccount) {
                 console.log('public account synced from main and updated locally: ', publicAccount)
                 await checkAccount()
                 await openAccount( mySmartID )
