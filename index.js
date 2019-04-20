@@ -168,7 +168,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         to : publicSmartID ,
                         type : 'index' ,
                     }
-                    await orbitdb._pubsub.publish( 'smartX-testnet' , dataObj )
+                    await orbitdb._pubsub.publish( 'smartX' , dataObj )
                 }
                 if (myAccount.get( 'smartID' ) === undefined && publicAccount[mySmartID] === undefined) {
                     console.log( 'Account does not exist for smartID: ' , mySmartID )
@@ -1094,7 +1094,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         document.getElementById( 'twitter' ).href = await socialUrl(smartID)
                         document.getElementById( 'twitter' ).style.color = 'orange'
 
-                        if (smartID === mySmartID) {
+                        if (smartID === mySmartID && publicAccount) {
 
                             await taxDistribution()
 
@@ -1691,12 +1691,6 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
         }, 5000)
 
-        setInterval(() => {
-            if (publicAccount && myAccount.get( 'smartID' ) !== undefined && publicAccount[mySmartID] === undefined) {
-                sendStateToPublicAccount().then(() => console.log('state not updated in public account so sent again'))
-            }
-        }, 10000)
-
         const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
 
         fullPublicAccount.events.on ( 'replicated' , async  () => {
@@ -1705,14 +1699,30 @@ const smartX = ( IPFS , ORBITDB ) => {
                 return
             }
 
-            console.log('public account synced from main and updated locally: ', publicAccount)
-            publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
-
             if (!publicAccount) {
+                publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
                 await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
+            }
+
+            publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+            console.log('public account synced from main and updated locally: ', publicAccount)
+
+            if (publicAccount.index[mySmartID] === undefined) {
+                console.log('peerID-smartID mapping not present so adding...')
+                let dataObj = {
+                    from : mySmartID ,
+                    fromPeer : orbitdb.id ,
+                    to : publicSmartID ,
+                    type : 'index' ,
+                }
+                await orbitdb._pubsub.publish( 'smartX' , dataObj )
+            }
+
+            if (publicAccount && myAccount.get( 'smartID' ) !== undefined && publicAccount[mySmartID] === undefined) {
+                sendStateToPublicAccount().then(() => console.log('state not updated in public account so sent again'))
             }
         } )
 
