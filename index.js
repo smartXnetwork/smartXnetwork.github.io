@@ -1695,7 +1695,9 @@ const smartX = ( IPFS , ORBITDB ) => {
                                             await showTokens()
                                             await checkAccount()
                                         } else {
-                                            location.reload(true)
+                                            alert('Syncing of account seems to be taking a bit longer than expected. ' +
+                                                'Please keep this tab open and check back again in couple of mins. ' +
+                                                'Sorry for the inconvenience.')
                                         }
                                     }, 20000)
                             }
