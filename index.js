@@ -1500,7 +1500,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     + ' \n smartXbot verify ' + document.getElementById( 'onboardingSmartID' ).value
                 return socialUrl
             } else {
-                let socialUrl = 'https://twitter.com/' + publicAccount.index[smartID].twitter
+                let socialUrl = 'https://twitter.com/' + myAccount.get('social').twitter
                 return socialUrl
             }
         }
@@ -1692,7 +1692,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         }, 5000)
 
         setInterval(() => {
-            if (myAccount.get( 'smartID' ) !== undefined && publicAccount[mySmartID] === undefined) {
+            if (publicAccount && myAccount.get( 'smartID' ) !== undefined && publicAccount[mySmartID] === undefined) {
                 sendStateToPublicAccount().then(() => console.log('state not updated in public account so sent again'))
             }
         }, 10000)
@@ -1705,10 +1705,10 @@ const smartX = ( IPFS , ORBITDB ) => {
                 return
             }
 
+            console.log('public account synced from main and updated locally: ', publicAccount)
             publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
 
-            if (publicAccount) {
-                console.log('public account synced from main and updated locally: ', publicAccount)
+            if (!publicAccount) {
                 await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
