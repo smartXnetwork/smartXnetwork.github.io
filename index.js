@@ -73,9 +73,11 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
 
-                if (data.type === 'publicEntries' && !publicAccount) {
-                    publicAccount = data.entry
-                    console.log( `public account entries: `, publicAccount )
+                if (data.type === 'publicEntries') {
+                    if (!publicAccount) {
+                        publicAccount = data.entry
+                        console.log( `public account entries: ` , publicAccount )
+                    }
                 }
                 else if ( data.to === mySmartID || data.to === myAccount.get( 'social' ).twitter ) {
                     console.log( `there are some pending changes for...` , mySmartID , data )
@@ -222,21 +224,22 @@ const smartX = ( IPFS , ORBITDB ) => {
         async function onPeer (topic, peer) {
             console.log('new peer joined')
 
-            setTimeout (async () => {
                 if (publicAccount) {
                     const smartID = await peerTosmartID( peer )
                     console.log( 'peer: ' , peer , ' smartID: ' , smartID )
                     smartID === publicSmartID ? console.log( `connected to public account: ${publicSmartID}` ) :
                         console.log( `welcome to ${topic}: ${smartID}` )
 
-                    if (smartID === publicSmartID && myAccount.get( 'pendingChanges' ) !== undefined &&
-                        myAccount.get( 'pendingChanges' ).length >= 1) {
-                        console.log( 'there are pending changes for public account...' )
-                        const pendingChanges = myAccount.get( 'pendingChanges' )
-                        await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
-                        console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
-                        const newPendingChanges = []
-                        await myAccount.put( 'pendingChanges' , newPendingChanges )
+                    if (smartID === publicSmartID && myAccount.get('smartID')) {
+                        await sendStateToPublicAccount()
+                        if (myAccount.get( 'pendingChanges' ) !== undefined && myAccount.get( 'pendingChanges' ).length >= 1) {
+                            console.log( 'there are pending changes for public account...' )
+                            const pendingChanges = myAccount.get( 'pendingChanges' )
+                            await pendingChanges.forEach( async dataObj => await orbitdb._pubsub.publish( 'smartX' , dataObj ) )
+                            console.log( 'pending state changes propagated successfully to public account' , pendingChanges )
+                            const newPendingChanges = []
+                            await myAccount.put( 'pendingChanges' , newPendingChanges )
+                        }
                     }
 
                     ipfs.pubsub.peers( 'smartX' ).then( async ( peers ) => {
@@ -245,7 +248,6 @@ const smartX = ( IPFS , ORBITDB ) => {
                         peers.forEach( async ( peer ) => smartIDs.push( await peerTosmartID( peer ) ) )
                     } )
                 }
-            }, 60000)
         }
 
         async function createAccount () {
@@ -1648,7 +1650,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
-        await openAccount( mySmartID )
+        setTimeout(async () => await openAccount( mySmartID ), 2500)
 
         setTimeout(async () => {
             if (publicAccount) {
@@ -1656,6 +1658,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
+                await sendStateToPublicAccount()
             } else {
                 console.log('requesting public entries')
                 await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
@@ -1694,7 +1697,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     }
                 }, 10000)
             }
-        }, 5000)
+        }, 10000)
 
         const fullPublicAccount = await orbitdb.open( `/orbitdb/${publicSmartID}/publicAccount` )
 
