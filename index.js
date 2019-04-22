@@ -66,12 +66,14 @@ const smartX = ( IPFS , ORBITDB ) => {
         const publicSmartID = 'QmTmTRkTQB4vp6wBmWenFNsAQHovGsJVmLPQrdrjKYv6dB'
         const publicPeerID = 'QmWErSJMrwzrW6s8MLdjtzRQPPzzGvvjmqATsuT8s1NvYX'
 
+        await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
+
         async function pendingChange( topic, data ) {
+            console.log('received message from peer, verifying...')
+
             oracleSmartID = data.oracleSmartID
             const publicAccountkey = '04a06c7212e67b42eb52cfa151223df06b5b0b4b9dd7c9da004e66e4dde2a202ea0a12963d3ab635c2c32253154f74ef89bbb1e7b6cc10c40219cc0b373c77be64'
             const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
-
-            console.log('received message from peer, verifying...')
 
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
 
@@ -1655,7 +1657,6 @@ const smartX = ( IPFS , ORBITDB ) => {
             );
         }
 
-        await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
         setTimeout(async () => await openAccount( mySmartID ), 5000)
 
         setTimeout(async () => {
@@ -1664,7 +1665,6 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await openAccount( mySmartID )
                 await displayRequests()
                 await showTokens()
-                await sendStateToPublicAccount()
             } else {
                 console.log('requesting public entries')
                 await orbitdb._pubsub.publish( 'smartX' , {to: publicSmartID, type: 'requestingPublicEntries'} )
