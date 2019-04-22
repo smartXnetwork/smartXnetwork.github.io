@@ -71,7 +71,11 @@ const smartX = ( IPFS , ORBITDB ) => {
             const publicAccountkey = '04a06c7212e67b42eb52cfa151223df06b5b0b4b9dd7c9da004e66e4dde2a202ea0a12963d3ab635c2c32253154f74ef89bbb1e7b6cc10c40219cc0b373c77be64'
             const pubKey = await orbitdb.keystore.importPublicKey( publicAccountkey )
 
+            console.log('received message from peer, verifying...')
+
             if (data.by === publicSmartID && await orbitdb.keystore.verify( data.signature , pubKey , data.entryHash )) {
+
+                console.log('data received from public account. type: ', data.type)
 
                 if (data.type === 'publicEntries') {
                     if (!publicAccount) {
@@ -1306,32 +1310,34 @@ const smartX = ( IPFS , ORBITDB ) => {
             //for each token account get data and create chart listener
 
             tokenAccounts.forEach(async (tokenID) => {
-                let i = document.createElement( 'button' )
-                i.setAttribute( "id" , tokenID )
-                i.setAttribute( "value" , tokenID )
-                i.setAttribute( "class" , "tokenContainer" )
-                i.appendChild( document.createTextNode( 'tokenID: ' + tokenID  ))
-                let j = document.createElement('div')
-                j.setAttribute('class', 'tweet')
-                //console.log(publicAccount.get(tokenID).urlID)
-                j.setAttribute('id', publicAccount[tokenID].urlID)
-                i.appendChild(j)
-                document.getElementById( 'tokensList' ).appendChild( i )
+                if (!document.getElementById(tokenID)) {
+                    let i = document.createElement( 'button' )
+                    i.setAttribute( "id" , tokenID )
+                    i.setAttribute( "value" , tokenID )
+                    i.setAttribute( "class" , "tokenContainer" )
+                    i.appendChild( document.createTextNode( 'tokenID: ' + tokenID ) )
+                    let j = document.createElement( 'div' )
+                    j.setAttribute( 'class' , 'tweet' )
+                    //console.log(publicAccount.get(tokenID).urlID)
+                    j.setAttribute( 'id' , publicAccount[ tokenID ].urlID )
+                    i.appendChild( j )
+                    document.getElementById( 'tokensList' ).appendChild( i )
 
-                document.getElementById( tokenID ).addEventListener( 'click' , async () => {
-                    const dataArray = [['Time', 'Tokens in circulation', 'Per token price']]
-                    const tokenTransactions = publicAccount[tokenID].transactions.filter(x => x.unit === tokenID)
-                    let _tokenSupply = 0;
-                    tokenTransactions.forEach(async transaction => {
-                        let txnDate = new Date(transaction.timestamp)
-                        _tokenSupply = _tokenSupply - transaction.amount
-                        let _tokenPrice = Math.log10(1 + _tokenSupply)
-                        dataArray.push([txnDate.toLocaleTimeString('en-us'), _tokenSupply, _tokenPrice])
-                    })
-                    await chart( tokenID, dataArray ).then( () => {
-                        console.log( 'token market opened' )
+                    document.getElementById( tokenID ).addEventListener( 'click' , async () => {
+                        const dataArray = [ [ 'Time' , 'Tokens in circulation' , 'Per token price' ] ]
+                        const tokenTransactions = publicAccount[ tokenID ].transactions.filter( x => x.unit === tokenID )
+                        let _tokenSupply = 0;
+                        tokenTransactions.forEach( async transaction => {
+                            let txnDate = new Date( transaction.timestamp )
+                            _tokenSupply = _tokenSupply - transaction.amount
+                            let _tokenPrice = Math.log10( 1 + _tokenSupply )
+                            dataArray.push( [ txnDate.toLocaleTimeString( 'en-us' ) , _tokenSupply , _tokenPrice ] )
+                        } )
+                        await chart( tokenID , dataArray ).then( () => {
+                            console.log( 'token market opened' )
+                        } )
                     } )
-                })
+                }
             } )
 
             //for each token fetch actual tweet data
@@ -1687,15 +1693,16 @@ const smartX = ( IPFS , ORBITDB ) => {
                                             await displayRequests()
                                             await showTokens()
                                         } else {
-                                            alert('Syncing of account seems to be taking a bit longer than expected due to high traffic. ' +
-                                                'Please keep this tab open and check back again in couple of mins. ' +
-                                                'Sorry for the inconvenience.')
+                                            let r = confirm("Syncing of account seems to be taking a bit longer than expected due to high traffic. Would you like to refresh the page and try again?")
+                                            if (r === true) {
+                                                location.reload(true)
+                                            }
                                         }
-                                    }, 15000)
+                                    }, 30000)
                             }
-                        }, 15000)
+                        }, 25000)
                     }
-                }, 15000)
+                }, 20000)
             }
         }, 15000)
 
