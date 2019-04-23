@@ -81,7 +81,8 @@ const smartX = ( IPFS , ORBITDB ) => {
 
                 if (data.type === 'publicEntries') {
                     if (!publicAccount) {
-                        publicAccount = data.entry
+                        publicAccount = await ipfs.object.get(data.entry, { enc: 'base58' })
+                            .then((obj) => JSON.parse(obj.toJSON().data))
                         console.log( `public account entries: ` , publicAccount )
                     }
                 }
