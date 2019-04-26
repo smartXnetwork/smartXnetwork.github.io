@@ -314,7 +314,7 @@ video {
   margin: 9px;
 }
 
-#balance, #deposit, #reward {
+#balance {
     position: relative;
     box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);
     width: 470px;
