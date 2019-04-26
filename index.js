@@ -1622,10 +1622,6 @@ const smartX = ( IPFS , ORBITDB ) => {
                         alert( 'Your purchase request has been processed!' ) )
                 }
                 else {
-                    if (!parentTokenID) {
-                        alert('Sorry you need to first create your own shares that can accrue any profit from items sold in market')
-                        return
-                    }
                     let tokenPrice = publicAccount[ tokenID ].startingPrice + 0.00
                     let totalInvestment = tokenPrice * quantity
                     const stakeholdersCosts = publicAccount[tokenID].costs
@@ -1716,6 +1712,11 @@ const smartX = ( IPFS , ORBITDB ) => {
         document.getElementById('tokenCreated').addEventListener('click', async () => {
 
             let url = document.getElementById('addTokenUrl').value.toString()
+
+            if (!publicAccount.index[mySmartID].parentTokenID) {
+                alert('Sorry you need to first create your own shares that can accrue any profit from items sold in market')
+                return
+            }
 
             if (!url || url.startsWith('https://twitter.com/')) {
                 let urlString = url.replace( 'https://twitter.com/' , '' )

@@ -544,7 +544,7 @@ hr {
 .hrow {
   left: 50%;
   transform: translate(-50%);
-  top: 60px;
+  top: 20px;
   width: 450px;
   position: relative;
 }

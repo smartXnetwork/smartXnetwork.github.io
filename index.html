@@ -597,8 +597,9 @@
     </div>
 
 
-    <div id="ownShares" style="margin-top: 50px" >
-        <button id="createOwnShare" class="btn" style="background-color: #f1f1f1; width: 200px;" onclick="document.getElementById('ownShare').style.display='block'">Issue shares ⚡️</i></button>
+    <div id="ownShares" style="bottom: 60px; width: 400px; position: absolute" >
+        <button class="btn" style="" onclick="document.getElementById('payment').style.display='block'">Send 💲</i></button>
+        <button id="createOwnShare" class="btn" style="margin-left: 10px" onclick="document.getElementById('ownShare').style.display='block'">Issue shares ⚡️</i></button>
     </div>
 
 
@@ -645,7 +646,7 @@
 
 
     <div style="position: relative;">
-        <p style="text-align: center; margin-top: 10px; margin-bottom: 5px">Transactions</p>
+        <p style="text-align: center; margin-top: 25px; margin-bottom: 5px">Transactions</p>
         <hr style="border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important">
         <div class="scrollit" style="position: relative;">
             <table id="transactions" style="width:500px; border: none">
@@ -658,7 +659,6 @@
 
 
     <div>
-        <button class="btn" style="position: absolute; bottom: 60px; width: 200px;" onclick="document.getElementById('payment').style.display='block'">Send 💲</i></button>
         <div id="payment" class="w3-modal">
             <span onclick="document.getElementById('payment').style.display ='none'" class="close">&times;</span>
             <h2 style="color: gray; margin-bottom: 10px; margin-bottom: 0px; ">Send smartCoin</h2>
