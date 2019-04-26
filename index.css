@@ -334,7 +334,7 @@ video {
     font-family: 'voces', sans-serif;
 }
 
-#_balance, #_deposit, #_reward {
+#_balance {
     background-color: bisque;
     font-size: 25px;
     font-family: 'voces', sans-serif;
