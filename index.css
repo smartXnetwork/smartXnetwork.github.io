@@ -381,16 +381,16 @@ video {
     box-shadow: 0 2px 5px 0 rgba(229, 66, 10, 0.75);
 }
 
-#payment, #tokenPurchase, #tokenSell, #createToken {
+#payment, #tokenPurchase, #tokenSell, #createToken, #tokenModal, #ownShare {
     position: absolute;
     box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);
-    width: 450px;
+    width: 550px;
     left: 50%;
     transform: translate(-50%);
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-    background-color: bisque;
+    background-color: #f1f1f1;
     visibility: visible;
     bottom: 55px;
     overflow: auto;
@@ -842,4 +842,37 @@ html {
     position: relative;
     border-radius: 20px;
     margin-top: 20px;
+}
+
+
+.accordion {
+    background-color: #f1f1f1;
+    color: darkorange;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+    transition: 0.4s;
+}
+
+.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: #f1f1f1;
+    overflow: hidden;
+}
+
+.dropdown {
+    text-align: center;
+    background-color: white;
+    font-size: 15px;
+    margin-bottom: 10px;
+    height: 40px;
+    margin-top: 10px;
+    width: 100%;
+    color: #5a6674;
+    border: none;
 }

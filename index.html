@@ -68,18 +68,18 @@
                     <div style="background-image: linear-gradient(bisque, white); border-radius: 20px; padding: 20px; margin-bottom: 50px; margin-top: 10px">
                         <img src="https://avatars3.githubusercontent.com/u/44389592?s=400&u=0b1b643c5ce2632dc6cf126f35adb3fd5f6f4d6a&v=4" style="height: 175px; width: 175px; box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);">
                     </div>
-                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">Your all-in-one smart wallet</h1>
+                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">A peer-to-peer virtual economy</h1>
 
                     <h2 style="font-size: 18px; color: #888888; position: relative">
-                        smartX provides everyone access to self-sovereign, digital identity,
-                        currency and markets in one place, making it easier
-                        for people to stay in control of their data and
-                        manage all kinds of socio-economic activities
-                        in open, intermediary-free virtual economy.
+                        smartX provides everyone access to self-sovereign, digital
+                        identity, currency and markets in one place, making it easier for people
+                        to stay in control of their data, exchange
+                        sound money, goods and services with each other and
+                        issue shares of anything in open, intermediary-free markets.
                         <br><br>
                         Don't let complex, archaic processes of real world
-                        hold you back. Realize your true potential with society's new
-                        truly digital and decentralized operating system, smartX.
+                        hold you back. Realize your true potential with
+                        truly digital and decentralized socio-economic system, smartX.
                     </h2>
                 </div>
             </div>
@@ -574,76 +574,221 @@
         </div>
     </div>
 
-    <div class="hrow" style="display: -webkit-box; text-align: -webkit-left; margin-top:15px">
-        <p>Total issued</p>
-        <input disabled id="_issued" value="" style="width: 50%; padding: 0px">
-        <p>Daily bonus</p>
-        <input disabled id="_dailyBonus" value="" style="width: 50%; padding: 0px">
-    </div>
-    <br>
-
-    <div class="hrow">
-        <div class="hcolumn" style="width: 50%; height: 100px">
-            <div class="card" style="height: 100px" >
-                <p>Verification security deposit</p>
-                <input disabled id="_deposit" value="" style="width: 70%; font-size: 20px">
-            </div>
-        </div>
-        <div class="hcolumn" style="width: 50%; height: 100px">
-            <div class="card" style="height: 100px" >
-                <p>Pending verification reward</p>
-                <input disabled id="_reward" value="" style="width: 70%; font-size: 20px">
-            </div>
-        </div>
+    <div class="hrow" style="text-align: center; margin-top:15px">
+        <span style="display:inline-block">
+            <label style="display:block">Total issued</label>
+            <input disabled id="_issued" value="" style="padding: 0px">
+        </span>
+        <span style="display:inline-block; margin-left: 15px">
+            <label style="display:block">Daily bonus</label>
+            <input disabled id="_dailyBonus" value="" style="padding: 0px">
+        </span>
     </div>
 
-    <div style="position: relative; top: 75px;">
+    <div class="hrow" style="text-align: center; margin-top:5px">
+        <span style="display:inline-block">
+            <label style="display:block">Verification deposit</label>
+            <input disabled id="_deposit" value="" style="padding: 0px">
+        </span>
+        <span style="display:inline-block; margin-left: 15px">
+            <label style="display:block">Verification reward</label>
+            <input disabled id="_reward" value="" style="padding: 0px">
+        </span>
+    </div>
+
+
+    <div id="ownShares" style="margin-top: 50px" >
+        <button id="createOwnShare" class="btn" style="background-color: #f1f1f1; width: 200px;" onclick="document.getElementById('ownShare').style.display='block'">Issue shares ⚡️</i></button>
+    </div>
+
+
+    <div id="ownShare" class="modal" style="z-index: 1; bottom: 0px;">
+        <span onclick="document.getElementById('ownShare').style.display ='none'" class="close">&times;</span>
+
+        <h2 style="color: gray; margin-bottom: 10px; top: 20px; ">Issue your own shares</h2>
+        <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 20px !important;">
+
+        <button class="accordion">Token details</button>
+        <div class="panel" style="display: block">
+            <input id="ownShareName" type="text" placeholder="What is the name of your share e.g. smartCoin?" required style="background-color: white; margin-bottom: 10px" maxlength="20">
+            <textarea id="ownShareDescription" placeholder="Add description of your share..." required style="background-color: white; margin-bottom: 10px;" maxlength="500"></textarea>
+        </div>
+
+        <button class="accordion">Token commercials</button>
+        <div class="panel">
+
+            <!--<div id="tokenPriceFunction" class="charts" style="height: 100%; width: 100%; text-align: justify !important;"></div>
+            <select id="itemPrice" class="dropdown" style="text-align: center; background-color: white; font-size: 15px; margin-bottom: 10px; height: 40px; margin-top: 10px; width: 100%;">
+                <option >Choose your pricing and supply algorithm...</option>
+                <option id="fixedPrice" value="fixed">Fixed price</option>
+                <option id="logarithmicPrice" value="log">Logarithmically increasing price</option>
+                <option id="linearPrice" value="linear">Linearly increasing price</option>
+            </select>-->
+            <input id="ownSharePrice" type="number" placeholder="💲 Starting price per share" required style="background-color: white; margin-bottom: 10px">
+
+        </div>
+
+        <button class="accordion">Bonus and perks</button>
+        <div class="panel">
+            <input id="creatorProfitShare" type="number" onchange="changeValue(this.value)" placeholder="% your profit share e.g. 25" required style="background-color: white; margin-bottom: 10px; width: 49%">
+            <input id="customerProfitShare" type="number" placeholder="% investor profit share" required style="background-color: white; margin-bottom: 10px; width: 49%" disabled>
+            <textarea id="anyOtherPerks" placeholder="Any other special perks?" required style="background-color: white; margin-bottom: 10px" maxlength="200"></textarea>
+        </div>
+
+        <button class="accordion">Terms & Conditions</button>
+        <div class="panel">
+            <textarea id="anyTnC" placeholder="Any terms and conditions?" required style="background-color: white; margin-bottom: 10px" maxlength="200"></textarea>
+        </div>
+
+        <button id="ownShareLaunched" class="btn">Issue your shares ⚡️</button>
+    </div>
+
+
+    <div style="position: relative;">
         <p style="text-align: center; margin-top: 10px; margin-bottom: 5px">Transactions</p>
         <hr style="border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important">
         <div class="scrollit" style="position: relative;">
-        <table id="transactions" style="width:500px; border: none">
-            <col width="25%" >
-            <col width="65%" >
-            <col width="10%" >
-        </table>
+            <table id="transactions" style="width:500px; border: none">
+                <col width="25%" >
+                <col width="65%" >
+                <col width="10%" >
+            </table>
         </div>
     </div>
 
-   <div>
-    <button class="btn" style="position: absolute; bottom: 60px; width: 200px;" onclick="document.getElementById('payment').style.display='block'">Send 💲</i></button>
-    <div id="payment" class="w3-modal">
-        <span onclick="document.getElementById('payment').style.display ='none'" class="close">&times;</span>
-        <h2 style="color: gray; margin-bottom: 10px; margin-bottom: 0px; ">Send smartCoin</h2>
-        <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
-        <input id="paymentTo" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
 
-        <input id="paymentAmount" type="number" placeholder="Enter amount..." required style="background-color: white">
+    <div>
+        <button class="btn" style="position: absolute; bottom: 60px; width: 200px;" onclick="document.getElementById('payment').style.display='block'">Send 💲</i></button>
+        <div id="payment" class="w3-modal">
+            <span onclick="document.getElementById('payment').style.display ='none'" class="close">&times;</span>
+            <h2 style="color: gray; margin-bottom: 10px; margin-bottom: 0px; ">Send smartCoin</h2>
+            <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
+            <input id="paymentTo" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
 
-        <button id="paymentSent" class="btn">Send </button>
+            <input id="paymentAmount" type="number" placeholder="Enter amount..." required style="background-color: white">
+
+            <button id="paymentSent" class="btn">Send </button>
+        </div>
     </div>
-   </div>
 
 </div>
 
-<div id="market" class="tabcontent">
+<div id="createToken" class="modal" style="z-index: 1; bottom: 0px;">
+    <span onclick="document.getElementById('createToken').style.display ='none'" class="close">&times;</span>
 
-    <div>
-        <button class="btn" style="bottom: 15px; width: 200px;" onclick="document.getElementById('createToken').style.display='block'">Create token ⚡️</i></button>
-        <div id="createToken" class="w3-modal" style="z-index: 1; bottom: 325px">
-            <span onclick="document.getElementById('createToken').style.display ='none'" class="close">&times;</span>
-            <h2 style="color: gray; margin-bottom: 10px; ">Create Token</h2>
-            <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
-            <input id="tokenUrl" type="text" placeholder="Enter url of item you want to tokenize..." required style="background-color: white; margin-bottom: 10px">
+    <h2 style="color: gray; margin-bottom: 10px; top: 20px; ">Create token</h2>
+    <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 15px !important;">
 
-            <button id="tokenCreated" class="btn">Create token ⚡️</button>
+    <button class="accordion">Token details</button>
+    <div class="panel" style="display: block">
+        <input id="addTokenUrl" type="text" placeholder="Enter url (if any)..." required style="background-color: white; margin-bottom: 10px">
+        <input id="addTokenName" type="text" placeholder="Enter title..." required style="background-color: white; margin-bottom: 10px" maxlength="100">
+        <textarea id="addTokenDescription" placeholder="Add description..." required style="background-color: white; margin-bottom: 10px;" maxlength="500"></textarea>
+    </div>
+
+    <button class="accordion">Token commercials</button>
+    <div class="panel">
+
+        <!--<div id="tokenPriceFunction" class="charts" style="height: 100%; width: 100%; text-align: justify !important;"></div>
+        <select id="itemPrice" class="dropdown" style="text-align: center; background-color: white; font-size: 15px; margin-bottom: 10px; height: 40px; margin-top: 10px; width: 100%;">
+            <option >Choose your pricing and supply algorithm...</option>
+            <option id="fixedPrice" value="fixed">Fixed price</option>
+            <option id="logarithmicPrice" value="log">Logarithmically increasing price</option>
+            <option id="linearPrice" value="linear">Linearly increasing price</option>
+        </select>-->
+        <input id="addCurrentPrice" type="number" placeholder="💲 Selling price of item" required style="background-color: white; margin-bottom: 10px">
+
+        <div id="costs">
+            <button id="addCosts" class="verificationRequests" style="background-color: #f1f1f1; width: 100%; margin-bottom: 10px">Add any fixed costs</button>
+        </div>
+
+        <input id="tokenProfit" type="number" placeholder="% Net profit" required style="background-color: white; margin-bottom: 10px;" disabled >
+    </div>
+
+    <button class="accordion">Bonus and perks</button>
+    <div class="panel">
+        <label style="display: block">Profit share for creator (%)</label>
+        <input id="ownProfitShare" type="number" placeholder="% royalty for creator" required style="background-color: white; margin-bottom: 10px; width: 100%" disabled>
+        <label style="display: block">Profit share for customers and investors (%)</label>
+        <input id="otherProfitShare" type="number" placeholder="% share for customer/investor" required style="background-color: white; margin-bottom: 10px; width: 100%" disabled>
+        <label style="display: block">Other perks</label>
+        <textarea id="addOtherPerks" placeholder="Any other special perks?" required style="background-color: white; margin-bottom: 10px" maxlength="200"></textarea>
+    </div>
+
+    <button class="accordion">Terms & Conditions</button>
+    <div class="panel">
+        <textarea id="addTnC" placeholder="Any terms and conditions?" required style="background-color: white; margin-bottom: 10px" maxlength="200"></textarea>
+    </div>
+
+    <button id="tokenCreated" class="btn">Create token ⚡️</button>
+</div>
+
+<div id="tokenModal" class="modal" style="z-index: 1; bottom: 0px;">
+    <span onclick="document.getElementById('tokenModal').style.display ='none'" class="close">&times;</span>
+
+    <h2 style="color: gray; margin-bottom: 10px; top: 20px;">Token details and market data</h2>
+    <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 20px !important;">
+
+    <button class="accordion">Token details</button>
+    <div class="panel" style="display: block">
+        <input id="tokenUrl" type="text" placeholder="What's the url of token (if any)?" required style="background-color: white; margin-bottom: 10px" disabled>
+        <input id="tokenName" type="text" placeholder="What's the name of token?" required style="background-color: white; margin-bottom: 10px" disabled>
+        <textarea id="tokenDescription" placeholder="Add description of token..." required style="background-color: white; margin-bottom: 10px;" maxlength="500" disabled></textarea>
+    </div>
+
+    <button class="accordion" style="display: block">Token commercials</button>
+    <div class="panel">
+        <label style="display: block">Token current price (💲)</label>
+        <input id="currentPrice" type="number" placeholder="💲 Current price of item" required style="background-color: white; margin-bottom: 10px" disabled>
+        <div id="tokenDetail" class="modal-content charts" style="width: 100%; text-align: center; display: block">
         </div>
     </div>
 
-    <div id="tokenModal" class="modal" style="display: none; visibility: hidden; position: sticky; height: -webkit-fill-available">
-        <div id="tokenDetail" class="modal-content charts" style="height: 100%; width: 100%; text-align: justify !important;">
-            <span onclick="document.getElementById('tokenModal').style.display ='none'" class="close">&times;</span>
+    <button class="accordion">Bonus and perks</button>
+    <div class="panel">
+        <div id="parentToken"><p id="parentTokenText"></p></div>
+        <label style="display: block">Profit share for creator (%)</label>
+        <input id="creatorShare" type="number" placeholder="% royalty for creator" required style="background-color: white; margin-bottom: 10px; width: 100%" disabled>
+        <label style="display: block">Profit share for customers and investors (%)</label>
+        <input id="customerShare" type="number" placeholder="% share for customer/investor" required style="background-color: white; margin-bottom: 10px; width: 100%" disabled>
+        <label style="display: block">Other perks</label>
+        <textarea id="otherPerks" placeholder="No other special perks!" required style="background-color: white; margin-bottom: 10px" maxlength="200" disabled></textarea>
+    </div>
 
-        </div>
+    <button class="accordion">Terms & Conditions</button>
+    <div class="panel">
+        <textarea id="TnC" placeholder="No terms and conditions mentioned!" required style="background-color: white; margin-bottom: 10px" maxlength="200" disabled></textarea>
+    </div>
+
+</div>
+
+<div id="tokenPurchase" class="w3-modal" style="z-index: 1; position:absolute;">
+    <span onclick="document.getElementById('tokenPurchase').style.display ='none'" class="close">&times;</span>
+    <h2 style="color: gray; margin-bottom: 10px; margin-top: 20px">Buy token</h2>
+    <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
+    <input id="paymentToTokenID" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
+
+    <input id="paymentAmountToTokenID" type="number" placeholder="Enter number of tokens to buy..." required style="background-color: white">
+
+    <button id="paymentSentToTokenID" class="btn">Buy </button>
+</div>
+
+<div id="tokenSell" class="w3-modal" style="z-index: 1; position:absolute;">
+    <span onclick="document.getElementById('tokenSell').style.display ='none'" class="close">&times;</span>
+    <h2 style="color: gray; margin-bottom: 10px; margin-top: 20px">Sell token</h2>
+    <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 5px !important;">
+    <input id="paymentFromTokenID" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
+
+    <input id="paymentAmountFromTokenID" type="number" placeholder="Enter number of tokens to sell..." required style="background-color: white">
+
+    <button id="paymentSentFromTokenID" class="btn">Sell </button>
+</div>
+
+<div id="market" class="tabcontent" style="top: 25px">
+
+    <div>
+        <button class="btn" style="bottom: 15px; width: 200px;" onclick="document.getElementById('createToken').style.display='block'">Create token ⚡️</i></button>
+
     </div>
 
     <div id="tokensList">
@@ -651,31 +796,54 @@
     </div>
 
 
-    <div id="tokenPurchase" class="w3-modal" style="z-index: 1; position:absolute;">
-        <span onclick="document.getElementById('tokenPurchase').style.display ='none'" class="close">&times;</span>
-        <h2 style="color: gray; margin-bottom: 10px;">Buy token</h2>
-        <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
-        <input id="paymentToTokenID" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
-
-        <input id="paymentAmountToTokenID" type="number" placeholder="Enter number of tokens to buy..." required style="background-color: white">
-
-        <button id="paymentSentToTokenID" class="btn">Buy </button>
-    </div>
-
-    <div id="tokenSell" class="w3-modal" style="z-index: 1; position:absolute;">
-        <span onclick="document.getElementById('tokenSell').style.display ='none'" class="close">&times;</span>
-        <h2 style="color: gray; margin-bottom: 10px;">Sell token</h2>
-        <hr style="border-top: 1px solid lightgrey; width: 300px; margin-bottom: 10px; margin-top: 0px !important;">
-        <input id="paymentFromTokenID" type="text" placeholder="smartID of peer..." required style="background-color: white; margin-bottom: 10px">
-
-        <input id="paymentAmountFromTokenID" type="number" placeholder="Enter number of tokens to sell..." required style="background-color: white">
-
-        <button id="paymentSentFromTokenID" class="btn">Sell </button>
-    </div>
-
 </div>
 
 <script>
+
+    function changeValue (value) {
+        document.getElementById('customerProfitShare').value = 100 - parseFloat(value)
+    }
+
+    function netProfit (value) {
+        const stakeholdersCosts = document.getElementById('costs').querySelectorAll('.stakeholderShare')
+        let valueSum = 0
+        stakeholdersCosts.forEach( x => {
+            valueSum = parseFloat(x.value) + valueSum
+        })
+        console.log(valueSum)
+        document.getElementById('tokenProfit').value = 100 - valueSum
+    }
+
+    document.getElementById('addCosts').addEventListener('click', async () => {
+        let i = document.createElement('input')
+        i.setAttribute('type', 'text')
+        i.setAttribute('placeholder', 'smartID of stakeholder')
+        i.setAttribute('class', 'stakeholderID')
+        i.setAttribute('style', 'background-color: white; margin-bottom: 10px; width: 49%')
+        let j = document.createElement('input')
+        j.setAttribute('type', 'number')
+        j.setAttribute('placeholder', '% for stakeholder')
+        j.setAttribute('class', 'stakeholderShare')
+        j.setAttribute('style', 'background-color: white; margin-bottom: 10px; margin-left: 4px; width: 49%')
+        j.setAttribute('onChange', 'netProfit(this.value)')
+        document.getElementById('costs').appendChild(i)
+        document.getElementById('costs').appendChild(j)
+    })
+
+    let acc = document.getElementsByClassName("accordion");
+    let i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            let panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
 
     let video = document.querySelector('video');
     video.muted = true;
