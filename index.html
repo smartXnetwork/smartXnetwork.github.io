@@ -147,8 +147,8 @@
                         from one time payment to pay as you go to recurring subscription to
                         demand based pricing, choose a business model that suits your needs.
                         <br><br>
-                        Create your own digital, programmable tokens with any pricing, supply and compliance mechanism that represent
-                        cashback, dividends or other privileges and offer them directly to your audience & customers.
+                        Create your own digital, programmable shares - with any pricing, supply and compliance mechanism -
+                        that represent profit share or other perks and offer them directly to your customers & investors.
                         <br>
                         <button class="verificationRequests" onclick="document.getElementById('bondingCurveModal').style.display ='block'" style="position: relative; text-align: center; background-color: white; font-size: 14px">See illustration</button>
                         <div id="bondingCurveModal" class="modal">
@@ -597,12 +597,6 @@
     </div>
 
 
-    <div id="ownShares" style="bottom: 60px; width: 400px; position: absolute" >
-        <button class="btn" style="" onclick="document.getElementById('payment').style.display='block'">Send 💲</i></button>
-        <button id="createOwnShare" class="btn" style="margin-left: 10px" onclick="document.getElementById('ownShare').style.display='block'">Issue shares ⚡️</i></button>
-    </div>
-
-
     <div id="ownShare" class="modal" style="z-index: 1; bottom: 0px;">
         <span onclick="document.getElementById('ownShare').style.display ='none'" class="close">&times;</span>
 
@@ -611,7 +605,7 @@
 
         <button class="accordion">Token details</button>
         <div class="panel" style="display: block">
-            <input id="ownShareName" type="text" placeholder="What is the name of your share e.g. smartCoin?" required style="background-color: white; margin-bottom: 10px" maxlength="20">
+            <input id="ownShareName" type="text" placeholder="What is the name of your share? e.g. smartCoin" required style="background-color: white; margin-bottom: 10px" maxlength="20">
             <textarea id="ownShareDescription" placeholder="Add description of your share..." required style="background-color: white; margin-bottom: 10px;" maxlength="500"></textarea>
         </div>
 
@@ -669,6 +663,11 @@
 
             <button id="paymentSent" class="btn">Send </button>
         </div>
+    </div>
+
+    <div id="ownShares" style="bottom: 60px; width: 400px; position: absolute; left:30%" >
+        <button class="btn" style="width: 45%;" onclick="document.getElementById('payment').style.display='block'">Send 💲</button>
+        <button id="createOwnShare" class="btn" style="margin-left: 10px; width: 45%" onclick="document.getElementById('ownShare').style.display='block'">Issue shares ⚡️</i></button>
     </div>
 
 </div>
