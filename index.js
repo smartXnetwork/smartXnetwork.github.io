@@ -437,23 +437,17 @@ const smartX = ( IPFS , ORBITDB ) => {
             const minted = alreadyMinted.vested
             const taxDeductionOnMinted = 0.15 * minted
 
-            const royaltyIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('royalty fee') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
-            const taxDeductionOnRoyaltyIncome = royaltyIncome ? 0.15 * royaltyIncome : 0
-            const tipIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('tip on twitter') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
-            const taxDeductionOnTipIncome = tipIncome ? 0.15 * tipIncome : 0
+            //const royaltyIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('royalty fee') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
+            //const taxDeductionOnRoyaltyIncome = royaltyIncome ? 0.15 * royaltyIncome : 0
+            //const tipIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('tip on twitter') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
+            //const taxDeductionOnTipIncome = tipIncome ? 0.15 * tipIncome : 0
 
             const taxTransactions = myAccount.get( 'transactions' ).filter(x => x.message.includes('tax paid to')).reduce( ( total , transaction ) => total + transaction.amount , 0 )
             const taxAlreadyPaid = taxTransactions ? Math.abs(taxTransactions) : 0
-            let taxToBePaid = taxDeductionOnMinted + taxDeductionOnRoyaltyIncome + taxDeductionOnTipIncome - taxAlreadyPaid
+            let taxToBePaid = taxDeductionOnMinted - taxAlreadyPaid
 
             if (taxToBePaid > 100) {
-                console.log(
-                    `taxDeductionOnMinted: ${taxDeductionOnMinted}, 
-                    taxDeductionOnRoyaltyIncome: ${taxDeductionOnRoyaltyIncome}, 
-                    taxDeductionOnTipIncome: ${taxDeductionOnTipIncome},
-                    taxAlreadyPaid: ${taxAlreadyPaid}, 
-                    taxToBePaid: ${taxToBePaid}`
-                )
+                console.log( `taxDeductionOnMinted: ${taxDeductionOnMinted}, taxAlreadyPaid: ${taxAlreadyPaid}, taxToBePaid: ${taxToBePaid}` )
 
                 const socialServices = publicAccount.socialServices
                 const taxPerService = taxToBePaid / (Object.entries(socialServices).length)
