@@ -688,14 +688,13 @@
     <button class="accordion">Token commercials</button>
     <div class="panel">
 
-        <!--<div id="tokenPriceFunction" class="charts" style="height: 100%; width: 100%; text-align: justify !important;"></div>
+        <div id="tokenPriceFunction"></div>
         <select id="itemPrice" class="dropdown" style="text-align: center; background-color: white; font-size: 15px; margin-bottom: 10px; height: 40px; margin-top: 10px; width: 100%;">
             <option >Choose your pricing and supply algorithm...</option>
-            <option id="fixedPrice" value="fixed">Fixed price</option>
-            <option id="logarithmicPrice" value="log">Logarithmically increasing price</option>
-            <option id="linearPrice" value="linear">Linearly increasing price</option>
-        </select>-->
-        <input id="addCurrentPrice" type="number" placeholder="💲 Selling price of item" required style="background-color: white; margin-bottom: 10px">
+            <option id="fixedPrice" value="fixed">Fixed price per token</option>
+            <!--<option id="logarithmicPrice" value="log10">Logarithmically increasing price per token</option>-->
+        </select>
+        <input id="addCurrentPrice" type="number" placeholder="💲 Starting price of token" required style="background-color: white; margin-bottom: 10px">
 
         <div id="costs">
             <button id="addCosts" class="verificationRequests" style="background-color: #f1f1f1; width: 100%; margin-bottom: 10px">Add any fixed costs</button>

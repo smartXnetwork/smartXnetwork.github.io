@@ -1612,8 +1612,8 @@ const smartX = ( IPFS , ORBITDB ) => {
                     let newTokenCount = currentTokenCount + quantity
                     let actualInvestment = await integrate( currentTokenCount , newTokenCount , 0.1 )
 
-                    await sendValue( tokenID , actualInvestment , quantity + ' tokens bought of ' + tokenID , 'smartCoin' ).then( () =>
-                        alert( 'Your purchase request has been processed!' ) )
+                    await sendValue( tokenID , actualInvestment , quantity + ' tokens bought of ' + tokenID , 'smartCoin' )
+                        .then( () => setTimeout(() => alert( 'Click OK to complete your purchase request.' ), 2500 ))
                 }
                 else {
                     let tokenPrice = publicAccount[ tokenID ].startingPrice + 0.00
@@ -1636,13 +1636,10 @@ const smartX = ( IPFS , ORBITDB ) => {
 
                     await sendValue( tokenID , amountTowardsToken , quantity + ' tokens bought of ' + tokenID , 'smartCoin' )
 
-                    setTimeout( async () => {
-                        if (profit > 0) {
-                            await sendValue( parentTokenID , profit , newParentTokensMinted.toFixed( 2 ) + ' tokens bought of ' + parentTokenID , 'smartCoin' ).then( () =>
-                                alert( 'Your purchase request has been processed!' ) )
-                            location.reload(true)
-                        }
-                    }, 5000 )
+                    if (profit > 0) {
+                        setTimeout(async () => await sendValue( parentTokenID , profit , newParentTokensMinted.toFixed( 2 ) + ' tokens bought of ' + parentTokenID , 'smartCoin' )
+                            .then( () => alert( 'Click OK to complete your purchase request.' ) ), 1500)
+                    }
                 }
             } else {
                 alert( 'Your request could not be processed. Please check the amount entered.' )
@@ -1677,7 +1674,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 name: document.getElementById('ownShareName').value,
                 description: document.getElementById('ownShareName').value,
                 priceFunction: 'log10',
-                startingPrice: document.getElementById('ownSharePrice').value ? parseFloat(document.getElementById('ownSharePrice').value) : 0,
+                startingPrice: document.getElementById('ownSharePrice').value ? 0 : 0,
                 costs: [],
                 creatorShare: document.getElementById('creatorProfitShare').value ? parseFloat(document.getElementById('creatorProfitShare').value) / 100 : '',
                 customerShare: document.getElementById('customerProfitShare').value ? parseFloat(document.getElementById('customerProfitShare').value) / 100 : '',
@@ -1741,7 +1738,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                     content: url ? url : null,
                     name: document.getElementById('addTokenName').value,
                     description: document.getElementById('addTokenDescription').value,
-                    priceFunction: 'fixed',
+                    priceFunction: document.getElementById('itemPrice').value,
                     startingPrice: document.getElementById('addCurrentPrice').value ? parseFloat(document.getElementById('addCurrentPrice').value) : 0,
                     costs: tokenCosts,
                     creatorShare: null,
