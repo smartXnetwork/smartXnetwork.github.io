@@ -343,7 +343,7 @@ video {
     padding: 0px !important;
 }
 
-#accountAction {
+#accountAction, #ownShares {
     position: absolute;
     width: 450px;
     left: 50%;
@@ -355,7 +355,7 @@ video {
     float: left;
 }
 
-#verify, #reject, #buy, #sell {
+#verify, #reject, #buy, #sell, #createOwnShare, #sendPayment {
     margin-right: 10px;
     margin-left: 10px;
     position: relative;
