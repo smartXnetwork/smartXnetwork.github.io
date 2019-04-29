@@ -1387,7 +1387,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         document.getElementById( 'customerShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
 
                         document.getElementById( 'otherPerks' ).value = publicAccount[ tokenID ].otherPerks
-                        document.getElementById( 'TnC' ).value = publicAccount[ tokenID ].tnc
+                        document.getElementById( 'TnC' ).value = publicAccount[ tokenID ].terms
 
                         document.getElementById( 'ownProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].creators[0].royalty * 100
                         document.getElementById( 'otherProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
@@ -1675,7 +1675,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 url: null,
                 content: document.getElementById('ownShareDescription').value,
                 name: document.getElementById('ownShareName').value,
-                description: document.getElementById('ownShareName').value,
+                description: document.getElementById('ownShareDescription').value,
                 priceFunction: 'log10',
                 startingPrice: document.getElementById('ownSharePrice').value ? 0 : 0,
                 costs: [],
