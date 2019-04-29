@@ -1705,70 +1705,55 @@ const smartX = ( IPFS , ORBITDB ) => {
 
         document.getElementById('tokenCreated').addEventListener('click', async () => {
 
-            let url = document.getElementById('addTokenUrl').value.toString()
-
             if (!publicAccount.index[mySmartID].parentTokenID) {
                 alert('Sorry you need to first create your own shares that can accrue any profit from items sold in market')
                 return
             }
 
-            if (!url || url.startsWith('https://twitter.com/')) {
-                let urlString = url.replace( 'https://twitter.com/' , '' )
-                let extractValues = urlString.split( '/' )
-                let creator = extractValues[ 0 ].toLowerCase()
-                let urlID = extractValues[ 2 ]
 
-                if (creator && await twitterIDToSmartID(creator) !== mySmartID) {
-                    alert('you can not create token on behalf of other creators')
+            const stakeholders = document.getElementById('costs').querySelectorAll('.stakeholderID')
+            const stakeholdersCosts = document.getElementById('costs').querySelectorAll('.stakeholderShare')
+            const tokenCosts = []
+            for (let i=0; i < stakeholders.length; i++) {
+                if (Object.keys(publicAccount.index).find(x => x === stakeholders[i].value) === undefined) {
+                    alert(`One of the given smartIDs ${stakeholders[i].value} does not exist in smartX. Please check and try again`)
                     return
                 }
-
-                const stakeholders = document.getElementById('costs').querySelectorAll('.stakeholderID')
-                const stakeholdersCosts = document.getElementById('costs').querySelectorAll('.stakeholderShare')
-                const tokenCosts = []
-                for (let i=0; i < stakeholders.length; i++) {
-                    if (Object.keys(publicAccount.index).find(x => x === stakeholders[i].value) === undefined) {
-                        alert(`One of the given smartIDs ${stakeholders[i].value} does not exist in smartX. Please check and try again`)
-                        return
-                    }
-                    tokenCosts.push([stakeholders[i].value,stakeholdersCosts[i].value / 100])
-                }
-
-                let dataObj = {
-                    ID: url ? creator : myAccount.get('social').twitter,
-                    urlID: url ? urlID : Date.now(),
-                    url: url ? url : null,
-                    content: url ? url : null,
-                    name: document.getElementById('addTokenName').value,
-                    description: document.getElementById('addTokenDescription').value,
-                    priceFunction: document.getElementById('itemPrice').value,
-                    startingPrice: document.getElementById('addCurrentPrice').value ? parseFloat(document.getElementById('addCurrentPrice').value) : 0,
-                    costs: tokenCosts,
-                    creatorShare: null,
-                    customerShare: null,
-                    otherPerks: document.getElementById('addOtherPerks').value,
-                    tnc: document.getElementById('addTnC').value ? document.getElementById('addTnC').value : 'No strings attached',
-                    parentToken: false,
-                    type: 'tokenCreation',
-                    for: publicSmartID,
-                }
-
-                if (Object.values(dataObj).find(x => x === undefined || x === "") !== undefined){
-                    alert('Token could not be created, make sure you have completed all the required information!')
-                    return
-                }
-
-                if (document.getElementById('tokenProfit').value < 0) {
-                    alert('Token profit can not be less than zero, please correct your price and costs.')
-                    return
-                }
-
-                console.log(dataObj)
-                await orbitdb._pubsub.publish( environment , dataObj )
-                alert('Your token has been created! Please refresh your page to see it live in the market!')
-            } else {
-                alert('Sorry, you can only tokenize tweets for now!')
+                tokenCosts.push([stakeholders[i].value,stakeholdersCosts[i].value / 100])
             }
+
+            let dataObj = {
+                ID: myAccount.get('social').twitter,
+                urlID: Date.now(),
+                url: document.getElementById('addTokenUrl').value.toString() ? document.getElementById('addTokenUrl').value.toString() : null,
+                content: document.getElementById('addTokenUrl').value.toString() ? document.getElementById('addTokenUrl').value.toString() : null,
+                name: document.getElementById('addTokenName').value,
+                description: document.getElementById('addTokenDescription').value,
+                priceFunction: document.getElementById('itemPrice').value,
+                startingPrice: document.getElementById('addCurrentPrice').value ? parseFloat(document.getElementById('addCurrentPrice').value) : 0,
+                costs: tokenCosts,
+                creatorShare: null,
+                customerShare: null,
+                otherPerks: document.getElementById('addOtherPerks').value,
+                tnc: document.getElementById('addTnC').value ? document.getElementById('addTnC').value : 'No strings attached',
+                parentToken: false,
+                type: 'tokenCreation',
+                for: publicSmartID,
+            }
+
+            if (Object.values(dataObj).find(x => x === undefined || x === "") !== undefined){
+                alert('Token could not be created, make sure you have completed all the required information!')
+                return
+            }
+
+            if (document.getElementById('tokenProfit').value < 0) {
+                alert('Token profit can not be less than zero, please correct your price and costs.')
+                return
+            }
+
+            console.log(dataObj)
+            await orbitdb._pubsub.publish( environment , dataObj )
+            alert('Your token has been created! Please refresh your page to see it live in the market!')
         })
 
         let socialShares = document.querySelectorAll(".js-social-share");
