@@ -441,6 +441,8 @@ const smartX = ( IPFS , ORBITDB ) => {
             //const taxDeductionOnRoyaltyIncome = royaltyIncome ? 0.15 * royaltyIncome : 0
             //const tipIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('tip on twitter') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
             //const taxDeductionOnTipIncome = tipIncome ? 0.15 * tipIncome : 0
+            //const tokenIncome = myAccount.get( 'transactions' ).filter(x => x.message.includes('tokens sold of') && x.type === 'credit').reduce( ( total , transaction ) => total + transaction.amount , 0 )
+            //const taxDeductionOnTokenIncome = tokenIncome ? 0.15 * tokenIncome : 0
 
             const taxTransactions = myAccount.get( 'transactions' ).filter(x => x.message.includes('tax paid to')).reduce( ( total , transaction ) => total + transaction.amount , 0 )
             const taxAlreadyPaid = taxTransactions ? Math.abs(taxTransactions) : 0
@@ -1609,11 +1611,12 @@ const smartX = ( IPFS , ORBITDB ) => {
                 if (parentTokenID === tokenID) {
                     console.log( 'bought some parent tokens' )
                     let currentTokenCount = await tokenSupply( tokenID , tokenID )
+                    quantity = quantity / ( 1 - publicAccount[ tokenID ].creators[0].royalty)
                     let newTokenCount = currentTokenCount + quantity
                     let actualInvestment = await integrate( currentTokenCount , newTokenCount , 0.1 )
 
-                    await sendValue( tokenID , actualInvestment , quantity + ' tokens bought of ' + tokenID , 'smartCoin' )
-                        .then( () => setTimeout(() => alert( 'Click OK to complete your purchase request.' ), 2500 ))
+                    await sendValue( tokenID , actualInvestment , quantity.toFixed(2) + ' tokens bought of ' + tokenID , 'smartCoin' )
+                        .then( () => setTimeout(() => alert( 'Click OK to complete your purchase request.' ), 1500 ))
                 }
                 else {
                     let tokenPrice = publicAccount[ tokenID ].startingPrice + 0.00
