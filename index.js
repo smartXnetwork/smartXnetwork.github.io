@@ -1328,10 +1328,10 @@ const smartX = ( IPFS , ORBITDB ) => {
                         i.setAttribute( "id" , tokenID )
                         i.setAttribute( "value" , tokenID )
                         i.setAttribute( "class" , "tokenContainer" )
-                        i.appendChild( document.createTextNode( 'tokenID: ' + tokenID ) )
-                        let h = document.createElement( 'hr' )
-                        h.setAttribute( 'style' , 'border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important' )
-                        i.appendChild( h )
+                        //i.appendChild( document.createTextNode( 'tokenID: ' + tokenID ) )
+                        //let h = document.createElement( 'hr' )
+                        //h.setAttribute( 'style' , 'border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important' )
+                        //i.appendChild( h )
                         let j = document.createElement( 'div' )
                         j.setAttribute( 'class' , 'tweet' )
                         //console.log(publicAccount.get(tokenID).urlID)
@@ -1700,7 +1700,9 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             console.log(dataObj)
             await orbitdb._pubsub.publish( environment , dataObj )
-            alert('Congrats, your token has been launched! Please refresh your page to see it live in the market!')
+            alert('Congrats, your virtual shares have been issued!')
+            const href = `https://twitter.com/intent/tweet/?text=I just issued my own virtual shares "${document.getElementById('ownShareName').value}". Go ahead, check it out on https://smartxnetwork.github.io/.`
+            windowPopup( href , 600 , 400 );
         })
 
         document.getElementById('tokenCreated').addEventListener('click', async () => {
@@ -1753,7 +1755,9 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             console.log(dataObj)
             await orbitdb._pubsub.publish( environment , dataObj )
-            alert('Your token has been created! Please refresh your page to see it live in the market!')
+            alert('Your token has been successfully created!')
+            const href = `https://twitter.com/intent/tweet/?text=I just created a new token "${document.getElementById('addTokenName').value}". Go ahead, check it out on https://smartxnetwork.github.io/.`
+            windowPopup( href , 600 , 400 );
         })
 
         let socialShares = document.querySelectorAll(".js-social-share");

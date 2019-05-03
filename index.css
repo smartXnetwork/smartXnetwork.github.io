@@ -811,7 +811,7 @@ html {
     width: 500px;
     background-color: #f1f1f1;
     padding: 20px;
-    box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 10px 0px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     margin-bottom: 20px;
     left: 50%;
