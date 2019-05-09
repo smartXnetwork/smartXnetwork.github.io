@@ -1852,12 +1852,12 @@ const smartX = ( IPFS , ORBITDB ) => {
                                             await openAccount( mySmartID )
                                             await displayRequests()
                                             await showTokens()
-                                        } else {
+                                        } /*else {
                                             let r = confirm("Syncing of account seems to be taking a bit longer than expected due to high traffic. Would you like to refresh the page and try again?")
                                             if (r === true) {
                                                 location.reload(true)
                                             }
-                                        }
+                                        }*/
                                     }, 30000)
                             }
                         }, 25000)
