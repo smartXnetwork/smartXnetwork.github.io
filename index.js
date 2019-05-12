@@ -1422,6 +1422,7 @@ const smartX = ( IPFS , ORBITDB ) => {
         }
 
         async function loadToken () {
+            console.log(document.location.href)
             if (document.location.href !== 'https://smartxnetwork.github.io') {
                 let url = document.location.search;
                 let tokenID = url.replace("?", '');
