@@ -67,11 +67,11 @@
                     <div style="background-image: linear-gradient(bisque, white); border-radius: 20px; padding: 20px; margin-bottom: 50px; margin-top: 10px">
                         <img src="https://avatars3.githubusercontent.com/u/44389592?s=400&u=0b1b643c5ce2632dc6cf126f35adb3fd5f6f4d6a&v=4" style="height: 175px; width: 175px; box-shadow: 0 5px 25px 5px rgba(0, 0, 0, 0.2);">
                     </div>
-                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">Self-sovereign, virtual economy</h1>
+                    <h1 style="font-size: 30px; padding: 5px; font-weight: bolder;">A peer-to-peer virtual economy</h1>
 
                     <h2 style="font-size: 18px; color: #888888; position: relative">
-                        smartX is people's own internet based monetary system
-                        to value invaluable things on the web -
+                        smartX empowers people to value invaluable things
+                        on the web through currency of the internet -
                         tip on social contributions, donate for favors,
                         make (micro)payments for online goods & services or
                         invest in new kind of digital native assets
@@ -95,7 +95,7 @@
                         Our social identity & capital is scattered all over the web,
                         controlled by monopolies, and lacks any tangible value.
                         <br><br>
-                        By using a universal, virtual currency we can better value
+                        By using a universal community currency we can better value
                         our social capital and trade it for things we like -
                         tipping on posts that make us happy,
                         feedback/learning session with an expert,
@@ -960,6 +960,18 @@
         if (event.target === document.getElementById('requestsModal')) {
             document.getElementById('requestsModal').style.display = "none";
         }
+    }
+
+    function windowPopup(url, width, height) {
+        // Calculate the position of the popup so
+        // it’s centered on the screen.
+        let left = (screen.width / 2) - (width / 2);
+        //     let  top = (screen.height / 2) - (height / 2);
+        window.open(
+            url,
+            "",
+            "menubar=no,toolbar=no,resizable=yes,scrollbars=yes,width=" + width + ",height=" + height + ",top=" + top + ",left=" + left
+        );
     }
 </script>
 

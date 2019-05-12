@@ -1315,7 +1315,7 @@ const smartX = ( IPFS , ORBITDB ) => {
             tokenAccounts.forEach(async (tokenID) => {
                 if (!document.getElementById(tokenID) && publicAccount[ tokenID ].name && publicAccount[ tokenID ].description) {
 
-                    if (tokenID === publicAccount.index[mySmartID].parentTokenID){
+                    if (publicAccount.index[mySmartID] !== undefined && tokenID === publicAccount.index[mySmartID].parentTokenID){
                         document.getElementById('createOwnShare').remove()
                         let o = document.createElement( 'button' )
                         o.setAttribute('id', tokenID)
@@ -1328,9 +1328,13 @@ const smartX = ( IPFS , ORBITDB ) => {
                         i.setAttribute( "id" , tokenID )
                         i.setAttribute( "value" , tokenID )
                         i.setAttribute( "class" , "tokenContainer" )
+                        let m = document.createElement('span')
+                        m.setAttribute('class', "close fa fa-share-alt")
+                        m.setAttribute('onclick', `windowPopup('https://twitter.com/intent/tweet/?text=Check out this token https://smartxnetwork.github.io/?${tokenID}' , 600 , 400)`)
+                        i.appendChild(m)
                         //i.appendChild( document.createTextNode( 'tokenID: ' + tokenID ) )
-                        //let h = document.createElement( 'hr' )
-                        //h.setAttribute( 'style' , 'border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important' )
+                        let h = document.createElement( 'hr' )
+                        h.setAttribute( 'style' , 'border-top: 1px solid lightgrey; width: 100px; margin-top: 5px !important; margin-bottom: 5px !important' )
                         //i.appendChild( h )
                         let j = document.createElement( 'div' )
                         j.setAttribute( 'class' , 'tweet' )
@@ -1348,50 +1352,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         document.getElementById( 'tokensList' ).appendChild( i )
                     }
 
-                    document.getElementById( tokenID ).addEventListener( 'click' , async () => {
-                        document.getElementById( 'tokenName' ).value = publicAccount[ tokenID ].name
-                        document.getElementById( 'tokenDescription' ).value = publicAccount[ tokenID ].description
-
-                        const dataArray = [ [ 'Time' , 'Tokens in circulation' , 'Per token price' ] ]
-                        const tokenTransactions = publicAccount[ tokenID ].transactions.filter( x => x.unit === tokenID )
-                        let _tokenSupply = 0;
-                        let _tokenPrice = 0;
-                        tokenTransactions.forEach( async transaction => {
-                            let txnDate = new Date( transaction.timestamp )
-                            _tokenSupply = _tokenSupply - transaction.amount
-                            _tokenPrice = publicAccount[ tokenID ].priceFunction === 'fixed' ? publicAccount[ tokenID ].startingPrice : Math.log10( 1 + _tokenSupply )
-                            dataArray.push( [ txnDate.toLocaleTimeString( 'en-us' ) , _tokenSupply , _tokenPrice ] )
-                        } )
-                        await chart( tokenID , dataArray ).then( () => {
-                            console.log( 'token market opened' )
-                        } )
-
-                        document.getElementById( 'currentPrice' ).value = Number(_tokenPrice).toFixed(2)
-
-                        if (!publicAccount[ tokenID ].url || publicAccount[ tokenID ].url !== null) {
-                            document.getElementById( 'tokenUrl' ).value = publicAccount[ tokenID ].url
-                        } else {
-                            document.getElementById( 'tokenUrl' ).remove()
-                        }
-
-                        if (document.getElementById('parentTokenText')) {
-                            document.getElementById('parentTokenText').remove()
-                            let p = document.createElement('p')
-                            p.setAttribute('id', 'parentTokenText')
-                            p.setAttribute('style', 'margin-bottom: 15px')
-                            p.appendChild(document.createTextNode( `Buyer of this token will receive shares of parent token and participate in profits. \nParent TokenID: ${publicAccount.index[mySmartID].parentTokenID} ` ))
-                            document.getElementById('parentToken').appendChild(p)
-                        }
-
-                        document.getElementById( 'creatorShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].creators[0].royalty * 100
-                        document.getElementById( 'customerShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
-
-                        document.getElementById( 'otherPerks' ).value = publicAccount[ tokenID ].otherPerks
-                        document.getElementById( 'TnC' ).value = publicAccount[ tokenID ].terms
-
-                        document.getElementById( 'ownProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].creators[0].royalty * 100
-                        document.getElementById( 'otherProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
-                    } )
+                    document.getElementById( tokenID ).addEventListener( 'click' , async () => await tokenData(tokenID))
                 }
             } )
 
@@ -1410,6 +1371,61 @@ const smartX = ( IPFS , ORBITDB ) => {
                         linkColor    : 'bisque', // default is blue
                         theme        : 'light'    // or dark
                     });
+            }
+        }
+
+        async function tokenData (tokenID) {
+
+            document.getElementById( 'tokenName' ).value = publicAccount[ tokenID ].name
+            document.getElementById( 'tokenDescription' ).value = publicAccount[ tokenID ].description
+
+            const dataArray = [ [ 'Time' , 'Tokens in circulation' , 'Per token price' ] ]
+            const tokenTransactions = publicAccount[ tokenID ].transactions.filter( x => x.unit === tokenID )
+            let _tokenSupply = 0;
+            let _tokenPrice = 0;
+            tokenTransactions.forEach( async transaction => {
+                let txnDate = new Date( transaction.timestamp )
+                _tokenSupply = _tokenSupply - transaction.amount
+                _tokenPrice = publicAccount[ tokenID ].priceFunction === 'fixed' ? publicAccount[ tokenID ].startingPrice : Math.log10( 1 + _tokenSupply )
+                dataArray.push( [ txnDate.toLocaleTimeString( 'en-us' ) , _tokenSupply , _tokenPrice ] )
+            } )
+            await chart( tokenID , dataArray ).then( () => {
+                console.log( 'token market opened' )
+            } )
+
+            document.getElementById( 'currentPrice' ).value = Number(_tokenPrice).toFixed(2)
+
+            if (!publicAccount[ tokenID ].url || publicAccount[ tokenID ].url !== null) {
+                document.getElementById( 'tokenUrl' ).value = publicAccount[ tokenID ].url
+            } else {
+                document.getElementById( 'tokenUrl' ).remove()
+            }
+
+            if (document.getElementById('parentTokenText')) {
+                document.getElementById('parentTokenText').remove()
+                let p = document.createElement('p')
+                p.setAttribute('id', 'parentTokenText')
+                p.setAttribute('style', 'margin-bottom: 15px')
+                p.appendChild(document.createTextNode( `Buyer of this token will receive shares of parent token and participate in profits. \nParent TokenID: ${publicAccount.index[tokenID].parentTokenID} ` ))
+                document.getElementById('parentToken').appendChild(p)
+            }
+
+            document.getElementById( 'creatorShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].creators[0].royalty * 100
+            document.getElementById( 'customerShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
+
+            document.getElementById( 'otherPerks' ).value = publicAccount[ tokenID ].otherPerks
+            document.getElementById( 'TnC' ).value = publicAccount[ tokenID ].terms
+
+            document.getElementById( 'ownProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].creators[0].royalty * 100
+            document.getElementById( 'otherProfitShare' ).value = publicAccount[publicAccount.index[ tokenID ].parentTokenID].customerShare * 100
+
+        }
+
+        async function loadToken () {
+            if (document.location.href !== 'https://smartxnetwork.github.io') {
+                let url = document.location.search;
+                let tokenID = url.replace("?", '');
+                await tokenData(tokenID)
             }
         }
 
@@ -1498,13 +1514,23 @@ const smartX = ( IPFS , ORBITDB ) => {
                 document.getElementById( 'tokenDetail' ).appendChild( l )
 
                 document.getElementById( 'sell' ).addEventListener( 'click' , async () => {
-                    document.getElementById('tokenSell').style.display='block'
-                    document.getElementById('paymentFromTokenID').value = tokenID
+                    if (myAccount.get('verifyingPeer').status === 'pending') {
+                        alert( 'Please get your smartID verified and claim your smartCoins to participate in markets.')
+                        location.assign("https://smartxnetwork.github.io/")
+                    } else {
+                        document.getElementById('tokenSell').style.display='block'
+                        document.getElementById('paymentFromTokenID').value = tokenID
+                    }
                 } )
 
                 document.getElementById( 'buy' ).addEventListener( 'click' , async () => {
-                    document.getElementById('tokenPurchase').style.display='block'
-                    document.getElementById('paymentToTokenID').value = tokenID
+                    if (myAccount.get('verifyingPeer').status === 'pending') {
+                        alert( 'Please get your smartID verified and claim your smartCoins to participate in markets.')
+                        location.assign("https://smartxnetwork.github.io/")
+                    } else {
+                        document.getElementById( 'tokenPurchase' ).style.display = 'block'
+                        document.getElementById( 'paymentToTokenID' ).value = tokenID
+                    }
                 } )
 
                 let chart = new google.visualization.AreaChart(i);
@@ -1817,10 +1843,13 @@ const smartX = ( IPFS , ORBITDB ) => {
             );
         }
 
-        setTimeout(async () => await openAccount( mySmartID ), 5000)
+        if (document.location.href === 'https://smartxnetwork.github.io/') {
+            setTimeout(async () => await openAccount( mySmartID ), 5000)
+        }
 
         setTimeout(async () => {
             if (publicAccount) {
+                await loadToken()
                 await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
@@ -1830,6 +1859,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                 await orbitdb._pubsub.publish( environment , {to: publicSmartID, type: 'requestingPublicEntries'} )
                 setTimeout(async () => {
                     if (publicAccount) {
+                        await loadToken()
                         await checkAccount()
                         await openAccount( mySmartID )
                         await displayRequests()
@@ -1839,6 +1869,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                         await orbitdb._pubsub.publish( environment , {to: publicSmartID, type: 'requestingPublicEntries'} )
                         setTimeout(async () => {
                             if (publicAccount) {
+                                await loadToken()
                                 await checkAccount()
                                 await openAccount( mySmartID )
                                 await displayRequests()
@@ -1848,6 +1879,7 @@ const smartX = ( IPFS , ORBITDB ) => {
                                 await orbitdb._pubsub.publish( environment , {to: publicSmartID, type: 'requestingPublicEntries'} )
                                     setTimeout(async () => {
                                         if (publicAccount) {
+                                            await loadToken()
                                             await checkAccount()
                                             await openAccount( mySmartID )
                                             await displayRequests()
@@ -1876,6 +1908,7 @@ const smartX = ( IPFS , ORBITDB ) => {
 
             if (!publicAccount) {
                 publicAccount = Object.entries( fullPublicAccount )[ 13 ][ 1 ][ '_index' ]
+                await loadToken()
                 await checkAccount()
                 await openAccount( mySmartID )
                 await displayRequests()
