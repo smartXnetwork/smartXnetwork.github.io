@@ -1063,7 +1063,8 @@ const smartX = ( IPFS , ORBITDB ) => {
             }
 
             function varyingText () {
-                let titleText = ['buy digital goods', 'sell online services', 'tip on content and posts' , 'invest in virtual assets', 'trade digital tokens', 'donate for favors']
+                //let titleText = ['buy digital goods', 'sell online services', 'tip on content and posts' , 'invest in virtual assets', 'trade digital tokens', 'donate for favors']
+                let titleText = ['social capital','likes', 'shares', 'retweets' , 'upvotes', 'claps', 'points', 'karma', 'favors']
                 let title = document.getElementById('titleText')
                 let i = 0;
                 setInterval(() => {
